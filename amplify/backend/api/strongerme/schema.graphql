@@ -2,9 +2,13 @@
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
 input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
 
-type Todo @model {
+type Exercise @model @auth(rules: [{ allow: public }]) {
   id: ID!
   name: String!
   description: String
-  priority: String
+  type: String
+  weight: Int
+  category: String
+  sets: Int
+  reps: [Int]
 }

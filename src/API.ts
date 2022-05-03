@@ -2,20 +2,28 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type CreateTodoInput = {
+export type CreateExerciseInput = {
   id?: string | null,
   name: string,
   description?: string | null,
-  priority?: string | null,
+  type?: string | null,
+  weight?: number | null,
+  category?: string | null,
+  sets?: number | null,
+  reps?: Array< number | null > | null,
 };
 
-export type ModelTodoConditionInput = {
+export type ModelExerciseConditionInput = {
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
-  priority?: ModelStringInput | null,
-  and?: Array< ModelTodoConditionInput | null > | null,
-  or?: Array< ModelTodoConditionInput | null > | null,
-  not?: ModelTodoConditionInput | null,
+  type?: ModelStringInput | null,
+  weight?: ModelIntInput | null,
+  category?: ModelStringInput | null,
+  sets?: ModelIntInput | null,
+  reps?: ModelIntInput | null,
+  and?: Array< ModelExerciseConditionInput | null > | null,
+  or?: Array< ModelExerciseConditionInput | null > | null,
+  not?: ModelExerciseConditionInput | null,
 };
 
 export type ModelStringInput = {
@@ -58,35 +66,59 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
-export type Todo = {
-  __typename: "Todo",
+export type ModelIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
+export type Exercise = {
+  __typename: "Exercise",
   id: string,
   name: string,
   description?: string | null,
-  priority?: string | null,
+  type?: string | null,
+  weight?: number | null,
+  category?: string | null,
+  sets?: number | null,
+  reps?: Array< number | null > | null,
   createdAt: string,
   updatedAt: string,
 };
 
-export type UpdateTodoInput = {
+export type UpdateExerciseInput = {
   id: string,
   name?: string | null,
   description?: string | null,
-  priority?: string | null,
+  type?: string | null,
+  weight?: number | null,
+  category?: string | null,
+  sets?: number | null,
+  reps?: Array< number | null > | null,
 };
 
-export type DeleteTodoInput = {
+export type DeleteExerciseInput = {
   id: string,
 };
 
-export type ModelTodoFilterInput = {
+export type ModelExerciseFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
-  priority?: ModelStringInput | null,
-  and?: Array< ModelTodoFilterInput | null > | null,
-  or?: Array< ModelTodoFilterInput | null > | null,
-  not?: ModelTodoFilterInput | null,
+  type?: ModelStringInput | null,
+  weight?: ModelIntInput | null,
+  category?: ModelStringInput | null,
+  sets?: ModelIntInput | null,
+  reps?: ModelIntInput | null,
+  and?: Array< ModelExerciseFilterInput | null > | null,
+  or?: Array< ModelExerciseFilterInput | null > | null,
+  not?: ModelExerciseFilterInput | null,
 };
 
 export type ModelIDInput = {
@@ -105,94 +137,114 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
-export type ModelTodoConnection = {
-  __typename: "ModelTodoConnection",
-  items:  Array<Todo | null >,
+export type ModelExerciseConnection = {
+  __typename: "ModelExerciseConnection",
+  items:  Array<Exercise | null >,
   nextToken?: string | null,
 };
 
-export type CreateTodoMutationVariables = {
-  input: CreateTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type CreateExerciseMutationVariables = {
+  input: CreateExerciseInput,
+  condition?: ModelExerciseConditionInput | null,
 };
 
-export type CreateTodoMutation = {
-  createTodo?:  {
-    __typename: "Todo",
+export type CreateExerciseMutation = {
+  createExercise?:  {
+    __typename: "Exercise",
     id: string,
     name: string,
     description?: string | null,
-    priority?: string | null,
+    type?: string | null,
+    weight?: number | null,
+    category?: string | null,
+    sets?: number | null,
+    reps?: Array< number | null > | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type UpdateTodoMutationVariables = {
-  input: UpdateTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type UpdateExerciseMutationVariables = {
+  input: UpdateExerciseInput,
+  condition?: ModelExerciseConditionInput | null,
 };
 
-export type UpdateTodoMutation = {
-  updateTodo?:  {
-    __typename: "Todo",
+export type UpdateExerciseMutation = {
+  updateExercise?:  {
+    __typename: "Exercise",
     id: string,
     name: string,
     description?: string | null,
-    priority?: string | null,
+    type?: string | null,
+    weight?: number | null,
+    category?: string | null,
+    sets?: number | null,
+    reps?: Array< number | null > | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type DeleteTodoMutationVariables = {
-  input: DeleteTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type DeleteExerciseMutationVariables = {
+  input: DeleteExerciseInput,
+  condition?: ModelExerciseConditionInput | null,
 };
 
-export type DeleteTodoMutation = {
-  deleteTodo?:  {
-    __typename: "Todo",
+export type DeleteExerciseMutation = {
+  deleteExercise?:  {
+    __typename: "Exercise",
     id: string,
     name: string,
     description?: string | null,
-    priority?: string | null,
+    type?: string | null,
+    weight?: number | null,
+    category?: string | null,
+    sets?: number | null,
+    reps?: Array< number | null > | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type GetTodoQueryVariables = {
+export type GetExerciseQueryVariables = {
   id: string,
 };
 
-export type GetTodoQuery = {
-  getTodo?:  {
-    __typename: "Todo",
+export type GetExerciseQuery = {
+  getExercise?:  {
+    __typename: "Exercise",
     id: string,
     name: string,
     description?: string | null,
-    priority?: string | null,
+    type?: string | null,
+    weight?: number | null,
+    category?: string | null,
+    sets?: number | null,
+    reps?: Array< number | null > | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type ListTodosQueryVariables = {
-  filter?: ModelTodoFilterInput | null,
+export type ListExercisesQueryVariables = {
+  filter?: ModelExerciseFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListTodosQuery = {
-  listTodos?:  {
-    __typename: "ModelTodoConnection",
+export type ListExercisesQuery = {
+  listExercises?:  {
+    __typename: "ModelExerciseConnection",
     items:  Array< {
-      __typename: "Todo",
+      __typename: "Exercise",
       id: string,
       name: string,
       description?: string | null,
-      priority?: string | null,
+      type?: string | null,
+      weight?: number | null,
+      category?: string | null,
+      sets?: number | null,
+      reps?: Array< number | null > | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -200,37 +252,49 @@ export type ListTodosQuery = {
   } | null,
 };
 
-export type OnCreateTodoSubscription = {
-  onCreateTodo?:  {
-    __typename: "Todo",
+export type OnCreateExerciseSubscription = {
+  onCreateExercise?:  {
+    __typename: "Exercise",
     id: string,
     name: string,
     description?: string | null,
-    priority?: string | null,
+    type?: string | null,
+    weight?: number | null,
+    category?: string | null,
+    sets?: number | null,
+    reps?: Array< number | null > | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type OnUpdateTodoSubscription = {
-  onUpdateTodo?:  {
-    __typename: "Todo",
+export type OnUpdateExerciseSubscription = {
+  onUpdateExercise?:  {
+    __typename: "Exercise",
     id: string,
     name: string,
     description?: string | null,
-    priority?: string | null,
+    type?: string | null,
+    weight?: number | null,
+    category?: string | null,
+    sets?: number | null,
+    reps?: Array< number | null > | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type OnDeleteTodoSubscription = {
-  onDeleteTodo?:  {
-    __typename: "Todo",
+export type OnDeleteExerciseSubscription = {
+  onDeleteExercise?:  {
+    __typename: "Exercise",
     id: string,
     name: string,
     description?: string | null,
-    priority?: string | null,
+    type?: string | null,
+    weight?: number | null,
+    category?: string | null,
+    sets?: number | null,
+    reps?: Array< number | null > | null,
     createdAt: string,
     updatedAt: string,
   } | null,
