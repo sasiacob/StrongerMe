@@ -1,12 +1,12 @@
 import React from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
-import Home from './src/screens/Home';
+import MainNavigator from './src/navigation/MainNavigator';
+import Home from './src/screens/HomeScreen';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <StatusBar />
-      <Home />
+      <MainNavigator />
     </View>
   );
 }

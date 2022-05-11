@@ -9,12 +9,14 @@ import {
   View,
   Platform,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {API, graphqlOperation} from 'aws-amplify';
 import {listExercises} from '../graphql/queries';
 import {createExercise} from '../graphql/mutations';
 import {CreateExerciseInput, DeleteExerciseInput, Exercise} from '../API';
-import * as subscriptions from '../graphql/subscriptions';
+import {deleteExercise} from '../graphql/mutations';
 import {captureRejections} from 'events';
+import {EXERCISE_DETAILS_SCREEN} from '../navigation/screenNames';
 const Header = () => (
   <View style={styles.headerContainer}>
     <Text style={styles.headerTitle}>My Exercise List</Text>
@@ -104,25 +106,30 @@ const AddExerciseModal = ({modalVisible, setModalVisible}) => {
 
 const ExerciseList = () => {
   const [exercises, setExercises] = useState([]);
-
+  const navigation = useNavigation();
   useEffect(() => {
     fetchData();
     return function cleanup() {};
   }, []);
   async function fetchData() {
-    const result = await API.graphql(graphqlOperation(listExercises));
-    setExercises(result.data.listExercises.items);
-    console.log(result);
+    try {
+      const result = await API.graphql(graphqlOperation(listExercises));
+      setExercises(result.data.listExercises.items);
+      console.log(result);
+    } catch (e) {
+      console.warn(e);
+    }
   }
-  async function deleteExercise(exercise: Exercise) {
+  async function deleteExerciseee(exercise: Exercise) {
     try {
       const input: DeleteExerciseInput = {
         id: exercise.id,
       };
       console.log('exercise.id', exercise.id);
       const result = await API.graphql(
-        graphqlOperation(deleteExercise, {input: input}),
+        graphqlOperation(deleteExercise, {input}),
       );
+      console.log('result', result);
     } catch (e) {
       console.log('delete error', e);
     }
@@ -132,8 +139,9 @@ const ExerciseList = () => {
     return (
       <Pressable
         onLongPress={() => {
-          deleteExercise(item);
+          deleteExerciseee(item);
         }}
+        onPress={() => navigation.navigate(EXERCISE_DETAILS_SCREEN)}
         style={styles.exerciseContainer}>
         <Text>
           <Text style={styles.exerciseHeading}>{item.name}</Text>
@@ -144,7 +152,7 @@ const ExerciseList = () => {
         </Text>
         {/* <Text
         style={[styles.checkbox, item.isComplete && styles.completedCheckbox]}>
-        {item.isComplete ? '✓' : ''}
+        {item.isComplete ? '✓' : ''}cd
       </Text> */}
       </Pressable>
     );
