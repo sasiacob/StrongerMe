@@ -50,3 +50,66 @@ export const onDeleteExercise = /* GraphQL */ `
     }
   }
 `;
+export const onCreateWorkout = /* GraphQL */ `
+  subscription OnCreateWorkout($id: ID, $title: String, $completed: Boolean) {
+    onCreateWorkout(id: $id, title: $title, completed: $completed) {
+      id
+      title
+      exercises {
+        id
+        name
+        description
+        type
+        weight
+        category
+        sets
+        reps
+        createdAt
+        updatedAt
+      }
+      completed
+    }
+  }
+`;
+export const onUpdateWorkout = /* GraphQL */ `
+  subscription OnUpdateWorkout($id: ID, $title: String, $completed: Boolean) {
+    onUpdateWorkout(id: $id, title: $title, completed: $completed) {
+      id
+      title
+      exercises {
+        id
+        name
+        description
+        type
+        weight
+        category
+        sets
+        reps
+        createdAt
+        updatedAt
+      }
+      completed
+    }
+  }
+`;
+export const onDeleteWorkout = /* GraphQL */ `
+  subscription OnDeleteWorkout($id: ID, $title: String, $completed: Boolean) {
+    onDeleteWorkout(id: $id, title: $title, completed: $completed) {
+      id
+      title
+      exercises {
+        id
+        name
+        description
+        type
+        weight
+        category
+        sets
+        reps
+        createdAt
+        updatedAt
+      }
+      completed
+    }
+  }
+`;

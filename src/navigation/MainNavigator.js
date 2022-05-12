@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {HomeStack} from './StackNavigators';
+import {ExerciseStack, HomeStack, WorkoutStack} from './StackNavigators';
 import {stacks} from './screenNames';
 
 function SettingsScreen() {
@@ -20,6 +20,8 @@ const MainNavigator = () => {
     <NavigationContainer>
       <Tab.Navigator screenOptions={{headerShown: false}}>
         <Tab.Screen name={stacks.homeStack} component={HomeStack} />
+        <Tab.Screen name={stacks.workoutStack} component={WorkoutStack} />
+        <Tab.Screen name={stacks.exerciseStack} component={ExerciseStack} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
     </NavigationContainer>

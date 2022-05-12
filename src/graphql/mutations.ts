@@ -59,3 +59,66 @@ export const deleteExercise = /* GraphQL */ `
     }
   }
 `;
+export const createWorkout = /* GraphQL */ `
+  mutation CreateWorkout($input: CreateWorkoutInput!) {
+    createWorkout(input: $input) {
+      id
+      title
+      exercises {
+        id
+        name
+        description
+        type
+        weight
+        category
+        sets
+        reps
+        createdAt
+        updatedAt
+      }
+      completed
+    }
+  }
+`;
+export const updateWorkout = /* GraphQL */ `
+  mutation UpdateWorkout($input: UpdateWorkoutInput!) {
+    updateWorkout(input: $input) {
+      id
+      title
+      exercises {
+        id
+        name
+        description
+        type
+        weight
+        category
+        sets
+        reps
+        createdAt
+        updatedAt
+      }
+      completed
+    }
+  }
+`;
+export const deleteWorkout = /* GraphQL */ `
+  mutation DeleteWorkout($input: DeleteWorkoutInput!) {
+    deleteWorkout(input: $input) {
+      id
+      title
+      exercises {
+        id
+        name
+        description
+        type
+        weight
+        category
+        sets
+        reps
+        createdAt
+        updatedAt
+      }
+      completed
+    }
+  }
+`;

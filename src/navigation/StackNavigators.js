@@ -1,13 +1,43 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {ExerciseDetailsScreen, HomeScreen} from '../screens';
-import {EXERCISE_DETAILS_SCREEN, HOME_SCREEN} from './screenNames';
+import {
+  ExerciseDetailsScreen,
+  ExercisesScreen,
+  HomeScreen,
+  WorkoutDetailsScreen,
+  WorkoutsScreen,
+} from '../screens';
+import {
+  EXERCISES_SCREEN,
+  EXERCISE_DETAILS_SCREEN,
+  HOME_SCREEN,
+  WORKOUTS_SCREEN,
+  WORKOUT_DETAILS_SCREEN,
+} from './screenNames';
 
 const Stack = createNativeStackNavigator();
 
 export const HomeStack = () => (
   <Stack.Navigator>
     <Stack.Screen name={HOME_SCREEN} component={HomeScreen} />
+    <Stack.Screen
+      name={EXERCISE_DETAILS_SCREEN}
+      component={ExerciseDetailsScreen}
+    />
+  </Stack.Navigator>
+);
+export const WorkoutStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name={WORKOUTS_SCREEN} component={WorkoutsScreen} />
+    <Stack.Screen
+      name={WORKOUT_DETAILS_SCREEN}
+      component={WorkoutDetailsScreen}
+    />
+  </Stack.Navigator>
+);
+export const ExerciseStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name={EXERCISES_SCREEN} component={ExercisesScreen} />
     <Stack.Screen
       name={EXERCISE_DETAILS_SCREEN}
       component={ExerciseDetailsScreen}

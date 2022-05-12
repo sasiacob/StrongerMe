@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Children} from 'react';
 import {
   FlatList,
   Modal,
@@ -169,7 +169,7 @@ const ExerciseList = () => {
   );
 };
 
-const Home = () => {
+const ExerciseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -183,6 +183,7 @@ const Home = () => {
         style={[styles.buttonContainer, styles.floatingButton]}>
         <Text style={styles.buttonText}>+ Add Exercise</Text>
       </Pressable>
+
       <AddExerciseModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -285,4 +286,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default ExerciseScreen;

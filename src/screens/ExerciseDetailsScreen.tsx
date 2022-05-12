@@ -1,12 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import {StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {Exercise} from '../API';
 
-export default function ExerciseDetailsScreen() {
+const ExerciseDetailsScreen = ({route}) => {
+  const exercise: Exercise = route.params.exercise;
   return (
     <View>
-      <Text>ExerciseDetailsScreen</Text>
+      <Text>{exercise?.name}</Text>
+      <Text>{exercise?.id}</Text>
     </View>
-  )
-}
+  );
+};
 
-const styles = StyleSheet.create({})    
+export default ExerciseDetailsScreen;
+
+const styles = StyleSheet.create({});
