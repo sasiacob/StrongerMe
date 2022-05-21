@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Children} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   FlatList,
   Modal,
@@ -10,20 +10,23 @@ import {
   Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {API, graphqlOperation} from 'aws-amplify';
-import {listExercises} from '../graphql/queries';
-import {createExercise} from '../graphql/mutations';
-import {CreateExerciseInput, DeleteExerciseInput, Exercise} from '../API';
-import {deleteExercise} from '../graphql/mutations';
-import {captureRejections} from 'events';
+import {Exercise} from '../API';
 import {EXERCISE_DETAILS_SCREEN} from '../navigation/screenNames';
+import {ExerciseCard} from '../components';
+import {useSelector} from 'react-redux';
+import {
+  addExercise,
+  removeExercise,
+  workoutSelector,
+} from '../store/slices/workoutSlice';
+import {useDispatch} from 'react-redux';
 const Header = () => (
   <View style={styles.headerContainer}>
-    <Text style={styles.headerTitle}>My Exercise List</Text>
+    <Text style={styles.headerTitle}>My Exercises</Text>
   </View>
 );
 
-const AddExerciseModal = ({modalVisible, setModalVisible}) => {
+const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -31,21 +34,19 @@ const AddExerciseModal = ({modalVisible, setModalVisible}) => {
   const [weight, setWeight] = useState(0);
   async function addExercise() {
     try {
-      let input: CreateExerciseInput = {
+      const newItem: Exercise = {
         name: name,
-        weight: weight,
-        reps: [8, 10, 12],
-        sets: sets,
-        category: category,
         description: description,
+        category: category,
+        sets: sets,
+        weight: weight,
+        __typename: 'Exercise',
+        id: name + description,
+        createdAt: '',
+        updatedAt: '',
       };
-
-      const result = await API.graphql(
-        graphqlOperation(createExercise, {input: input}),
-      );
-      console.log('result', result);
+      onSubmit(newItem);
       resetValues();
-      setModalVisible(false);
     } catch (e) {
       console.log('error: ', e);
     }
@@ -105,31 +106,16 @@ const AddExerciseModal = ({modalVisible, setModalVisible}) => {
 };
 
 const ExerciseList = () => {
-  const [exercises, setExercises] = useState([]);
+  const {exercises} = useSelector(workoutSelector);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   useEffect(() => {
-    fetchData();
     return function cleanup() {};
   }, []);
-  async function fetchData() {
+
+  async function deleteExercise(exercise: Exercise) {
     try {
-      const result = await API.graphql(graphqlOperation(listExercises));
-      setExercises(result.data.listExercises.items);
-      console.log(result);
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-  async function deleteExerciseee(exercise: Exercise) {
-    try {
-      const input: DeleteExerciseInput = {
-        id: exercise.id,
-      };
-      console.log('exercise.id', exercise.id);
-      const result = await API.graphql(
-        graphqlOperation(deleteExercise, {input}),
-      );
-      console.log('result', result);
+      dispatch(removeExercise(exercise.id));
     } catch (e) {
       console.log('delete error', e);
     }
@@ -139,23 +125,12 @@ const ExerciseList = () => {
     return (
       <Pressable
         onLongPress={() => {
-          deleteExerciseee(item);
+          deleteExercise(item);
         }}
         onPress={() =>
           navigation.navigate(EXERCISE_DETAILS_SCREEN, {exercise: item})
-        }
-        style={styles.exerciseContainer}>
-        <Text>
-          <Text style={styles.exerciseHeading}>{item.name}</Text>
-          {`\n${item.description}`}
-          {`\n${item.sets}`}
-          {`\n${item.weight}`}
-          {`\n${item.category}`}
-        </Text>
-        {/* <Text
-        style={[styles.checkbox, item.isComplete && styles.completedCheckbox]}>
-        {item.isComplete ? '✓' : ''}cd
-      </Text> */}
+        }>
+        <ExerciseCard exercise={item} />
       </Pressable>
     );
   };
@@ -163,6 +138,18 @@ const ExerciseList = () => {
   return (
     <FlatList
       data={exercises}
+      contentContainerStyle={{flexGrow: 1}}
+      ListEmptyComponent={
+        <View
+          style={{
+            flex: 1,
+            borderWidth: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text>No exercises</Text>
+        </View>
+      }
       keyExtractor={({id}) => id}
       renderItem={renderItem}
     />
@@ -171,9 +158,15 @@ const ExerciseList = () => {
 
 const ExerciseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const dispatch = useDispatch();
 
+  const onAddSubmit = (exercise: Exercise) => {
+    console.log('exercise', exercise);
+    dispatch(addExercise(exercise));
+    setModalVisible(false);
+  };
   return (
-    <>
+    <View style={{flex: 1}}>
       <Header />
       <ExerciseList />
       <Pressable
@@ -187,23 +180,21 @@ const ExerciseScreen = () => {
       <AddExerciseModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
+        onSubmit={onAddSubmit}
       />
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: '#4696ec',
-    borderWidth: 1,
-    paddingTop: Platform.OS === 'ios' ? 44 : 0,
+    padding: 10,
   },
   headerTitle: {
-    color: '#fff',
-    fontSize: 20,
+    color: '#3a3a3a',
+    fontSize: 30,
     fontWeight: '600',
     paddingVertical: 16,
-    textAlign: 'center',
   },
   exerciseContainer: {
     alignItems: 'center',

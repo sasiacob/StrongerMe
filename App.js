@@ -1,13 +1,21 @@
 import React from 'react';
-import {StatusBar, StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
+import {Provider} from 'react-redux';
 import MainNavigator from './src/navigation/MainNavigator';
-import Home from './src/screens/HomeScreen';
+import store from './src/store/store';
+import {persistStore} from 'redux-persist';
+import {PersistGate} from 'redux-persist/integration/react';
 
 export default function App() {
+  let persistor = persistStore(store);
   return (
-    <View style={styles.container}>
-      <MainNavigator />
-    </View>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaView style={styles.container}>
+          <MainNavigator />
+        </SafeAreaView>
+      </PersistGate>
+    </Provider>
   );
 }
 

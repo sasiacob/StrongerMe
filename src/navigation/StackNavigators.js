@@ -28,7 +28,11 @@ export const HomeStack = () => (
 );
 export const WorkoutStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name={WORKOUTS_SCREEN} component={WorkoutsScreen} />
+    <Stack.Screen
+      name={WORKOUTS_SCREEN}
+      component={WorkoutsScreen}
+      options={{headerShown: false}}
+    />
     <Stack.Screen
       name={WORKOUT_DETAILS_SCREEN}
       component={WorkoutDetailsScreen}
@@ -37,7 +41,11 @@ export const WorkoutStack = () => (
 );
 export const ExerciseStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name={EXERCISES_SCREEN} component={ExercisesScreen} />
+    <Stack.Screen
+      options={{headerShown: false}}
+      name={EXERCISES_SCREEN}
+      component={ExercisesScreen}
+    />
     <Stack.Screen
       name={EXERCISE_DETAILS_SCREEN}
       component={ExerciseDetailsScreen}
