@@ -10,11 +10,27 @@ const WorkoutCard = ({item}: IWorkoutCard) => {
   return (
     <View style={styles.exerciseContainer}>
       <Text style={styles.exerciseHeading}>{item.title}</Text>
-      <Text>{item.id}</Text>
+      <Text>{new Date(parseInt(item.id)).toLocaleString()}</Text>
       <View>
+        <View
+          style={{
+            padding: 5,
+            justifyContent: 'space-around',
+            flexDirection: 'row',
+          }}>
+          <Text>Exercise</Text>
+          <Text>Weight</Text>
+        </View>
         {item.exercises?.map(exercise => (
-          <View style={{padding: 5, borderWidth: 1}} key={exercise.name}>
+          <View
+            style={{
+              padding: 5,
+              justifyContent: 'space-around',
+              flexDirection: 'row',
+            }}
+            key={exercise.id}>
             <Text>{exercise.name}</Text>
+            <Text>{exercise.weight}</Text>
           </View>
         ))}
       </View>
@@ -24,7 +40,6 @@ const WorkoutCard = ({item}: IWorkoutCard) => {
 export default WorkoutCard;
 const styles = StyleSheet.create({
   exerciseContainer: {
-    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 2,
     elevation: 4,

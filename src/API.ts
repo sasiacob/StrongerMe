@@ -584,3 +584,13 @@ export type OnDeleteWorkoutSubscription = {
     completed?: boolean | null;
   } | null;
 };
+
+// MANUALLY CREATED TYPES
+// TODO: INTEGRATE WITH GRAPHQL
+export type WorkoutLog = {
+  id: string;
+  timstamp: number;
+  exercises: Exercise[];
+  workout?: Workout | null;
+  
+};

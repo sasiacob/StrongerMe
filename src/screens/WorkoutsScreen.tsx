@@ -20,7 +20,9 @@ import {
   workoutSelector,
 } from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
-import {WorkoutCard} from '../components';
+import {WorkoutCard, AppModal} from '../components';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 const Header = () => (
   <View style={styles.headerContainer}>
     <Text style={styles.headerTitle}>My Workouts</Text>
@@ -43,7 +45,7 @@ const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
 
       const newItem: Workout = {
         __typename: 'Workout',
-        id: name,
+        id: Date.now().toString(),
         title: name,
         exercises: selectedExercises,
       };
@@ -73,57 +75,48 @@ const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   };
 
   return (
-    <Modal
-      animationType="fade"
-      onRequestClose={closeModal}
-      transparent
-      visible={modalVisible}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalInnerContainer}>
-          <Pressable onPress={closeModal} style={styles.modalDismissButton}>
-            <Text style={styles.modalDismissText}>X</Text>
-          </Pressable>
-          <TextInput
-            onChangeText={setName}
-            placeholder="Workout title"
-            style={styles.modalInput}
-          />
-          <TextInput
-            onChangeText={setDescription}
-            placeholder="Workout description"
-            style={styles.modalInput}
-          />
-          <Text>Exercises: </Text>
-          <View style={{height: 200, borderWidth: 1}}>
-            <ScrollView contentContainerStyle={{flexGrow: 1, borderWidth: 1}}>
-              {exercises.map((exercise, index) => (
-                <Pressable onPress={() => toggleSelected(index)}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      paddingVertical: 10,
-                      borderWidth: 1,
-                    }}>
-                    <Text>{exercise.name}</Text>
-                    <Text>
-                      {selectedIndexes.includes(index)
-                        ? 'checked'
-                        : 'unchecked'}
-                    </Text>
-                  </View>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-
-          <Pressable onPress={addWorkout} style={styles.buttonContainer}>
-            <Text style={styles.buttonText}>Save Workout</Text>
-          </Pressable>
-        </View>
+    <AppModal setModalVisible={setModalVisible} modalVisible={modalVisible}>
+      <TextInput
+        onChangeText={setName}
+        placeholder="Workout title"
+        style={styles.modalInput}
+      />
+      <TextInput
+        onChangeText={setDescription}
+        placeholder="Workout description"
+        style={styles.modalInput}
+      />
+      <Text>Exercises: </Text>
+      <View style={{height: 200}}>
+        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+          {exercises.map((exercise, index) => (
+            <Pressable key={exercise.id} onPress={() => toggleSelected(index)}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: 10,
+                }}>
+                <Text>{exercise.name}</Text>
+                <Icon
+                  size={25}
+                  name={
+                    selectedIndexes.includes(index)
+                      ? 'checkbox-marked-circle'
+                      : 'checkbox-blank-circle-outline'
+                  }
+                />
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
       </View>
-    </Modal>
+
+      <Pressable onPress={addWorkout} style={styles.buttonContainer}>
+        <Text style={styles.buttonText}>Save Workout</Text>
+      </Pressable>
+    </AppModal>
   );
 };
 const WorkoutList = () => {
@@ -161,7 +154,7 @@ const WorkoutList = () => {
         <View
           style={{
             flex: 1,
-            borderWidth: 1,
+
             alignItems: 'center',
             justifyContent: 'center',
           }}>
@@ -231,15 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
   },
-  checkbox: {
-    borderRadius: 2,
-    borderWidth: 2,
-    fontWeight: '700',
-    height: 20,
-    marginLeft: 'auto',
-    textAlign: 'center',
-    width: 20,
-  },
+
   completedCheckbox: {
     backgroundColor: '#000',
     color: '#fff',

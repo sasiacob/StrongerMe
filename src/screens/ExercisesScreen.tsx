@@ -20,6 +20,7 @@ import {
   workoutSelector,
 } from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
+import AppModal from '../components/AppModal';
 const Header = () => (
   <View style={styles.headerContainer}>
     <Text style={styles.headerTitle}>My Exercises</Text>
@@ -32,6 +33,8 @@ const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
   const [category, setCategory] = useState('');
   const [sets, setSets] = useState(0);
   const [weight, setWeight] = useState(0);
+  const [reps, setReps] = useState(0);
+
   async function addExercise() {
     try {
       const newItem: Exercise = {
@@ -39,17 +42,16 @@ const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
         description: description,
         category: category,
         sets: sets,
+        reps: [reps],
         weight: weight,
         __typename: 'Exercise',
-        id: name + description,
+        id: Date.now().toString(),
         createdAt: '',
         updatedAt: '',
       };
       onSubmit(newItem);
       resetValues();
-    } catch (e) {
-      console.log('error: ', e);
-    }
+    } catch (e) {}
   }
   function resetValues() {
     setName('');
@@ -63,45 +65,40 @@ const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
   }
 
   return (
-    <Modal
-      animationType="fade"
-      onRequestClose={closeModal}
-      transparent
-      visible={modalVisible}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalInnerContainer}>
-          <Pressable onPress={closeModal} style={styles.modalDismissButton}>
-            <Text style={styles.modalDismissText}>X</Text>
-          </Pressable>
-          <TextInput
-            onChangeText={setName}
-            placeholder="Name"
-            style={styles.modalInput}
-          />
-          <TextInput
-            onChangeText={setCategory}
-            placeholder="Category"
-            style={styles.modalInput}
-          />
-          <TextInput
-            onChangeText={text => setWeight(parseInt(text))}
-            placeholder="Weight"
-            style={styles.modalInput}
-            keyboardType={'numeric'}
-          />
-          <TextInput
-            onChangeText={text => setSets(parseInt(text))}
-            placeholder="Sets"
-            style={styles.modalInput}
-            keyboardType={'numeric'}
-          />
+    <AppModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
+      <TextInput
+        onChangeText={setName}
+        placeholder="Name"
+        style={styles.modalInput}
+      />
+      <TextInput
+        onChangeText={setCategory}
+        placeholder="Category"
+        style={styles.modalInput}
+      />
+      <TextInput
+        onChangeText={text => setWeight(parseInt(text))}
+        placeholder="Weight"
+        style={styles.modalInput}
+        keyboardType={'numeric'}
+      />
+      <TextInput
+        onChangeText={text => setSets(parseInt(text))}
+        placeholder="Sets"
+        style={styles.modalInput}
+        keyboardType={'numeric'}
+      />
+      <TextInput
+        onChangeText={text => setReps(parseInt(text))}
+        placeholder="Reps"
+        style={styles.modalInput}
+        keyboardType={'numeric'}
+      />
 
-          <Pressable onPress={addExercise} style={styles.buttonContainer}>
-            <Text style={styles.buttonText}>Save Exercise</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Modal>
+      <Pressable onPress={addExercise} style={styles.buttonContainer}>
+        <Text style={styles.buttonText}>Save Exercise</Text>
+      </Pressable>
+    </AppModal>
   );
 };
 
@@ -116,9 +113,7 @@ const ExerciseList = () => {
   async function deleteExercise(exercise: Exercise) {
     try {
       dispatch(removeExercise(exercise.id));
-    } catch (e) {
-      console.log('delete error', e);
-    }
+    } catch (e) {}
   }
 
   const renderItem = ({item}: {item: Exercise}) => {
@@ -143,7 +138,7 @@ const ExerciseList = () => {
         <View
           style={{
             flex: 1,
-            borderWidth: 1,
+        
             alignItems: 'center',
             justifyContent: 'center',
           }}>
@@ -161,7 +156,6 @@ const ExerciseScreen = () => {
   const dispatch = useDispatch();
 
   const onAddSubmit = (exercise: Exercise) => {
-    console.log('exercise', exercise);
     dispatch(addExercise(exercise));
     setModalVisible(false);
   };
@@ -216,15 +210,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
   },
-  checkbox: {
-    borderRadius: 2,
-    borderWidth: 2,
-    fontWeight: '700',
-    height: 20,
-    marginLeft: 'auto',
-    textAlign: 'center',
-    width: 20,
-  },
+ 
   completedCheckbox: {
     backgroundColor: '#000',
     color: '#fff',

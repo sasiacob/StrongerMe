@@ -1,4 +1,4 @@
-import {Action, configureStore} from '@reduxjs/toolkit';
+import {Action, configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
 import {useDispatch} from 'react-redux';
 import {ThunkAction} from 'redux-thunk';
 import {
@@ -15,9 +15,13 @@ const persisConfig = {
   key: 'root',
   storage: AsyncStorage,
 };
+const customizedMiddleware = getDefaultMiddleware({
+  serializableCheck: false
+})
 const persistedReducer = persistReducer(persisConfig, rootReducer);
 const store = configureStore({
   reducer: persistedReducer,
+  middleware: customizedMiddleware
 });
 export type AppThunk = ThunkAction<void, RootState, unknown, Action>;
 export default store;

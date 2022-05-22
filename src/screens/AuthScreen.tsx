@@ -7,7 +7,7 @@ import {authSelector, ICurentUser, login, logOut, setAuthSuccess, setLogOut} fro
 const AuthScreen = () => {
   const dispatch = useDispatch();
   const data = useSelector(authSelector);
-  console.log('data', data);
+
   const {currentUser, isLoading, error, isAuth} = data ?? {};
   if (isLoading)
     return (
@@ -30,7 +30,7 @@ const AuthScreen = () => {
       ) : (
         <Pressable
           onPress={() => {
-            console.log('login');
+     
             dispatch(login());
           }}>
           <Text>Login</Text>

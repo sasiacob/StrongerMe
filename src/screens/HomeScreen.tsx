@@ -1,22 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {} from 'react';
 import {
-  FlatList,
-  Modal,
-  Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
   Platform,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {API, graphqlOperation} from 'aws-amplify';
-import {listExercises} from '../graphql/queries';
-import {createExercise} from '../graphql/mutations';
-import {CreateExerciseInput, DeleteExerciseInput, Exercise} from '../API';
-import {deleteExercise} from '../graphql/mutations';
-import {captureRejections} from 'events';
-import {EXERCISE_DETAILS_SCREEN} from '../navigation/screenNames';
 
 const Home = () => {
   return (
@@ -29,7 +17,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#4696ec',
-    borderWidth: 1,
+   
     paddingTop: Platform.OS === 'ios' ? 44 : 0,
   },
   headerTitle: {
@@ -59,15 +47,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
   },
-  checkbox: {
-    borderRadius: 2,
-    borderWidth: 2,
-    fontWeight: '700',
-    height: 20,
-    marginLeft: 'auto',
-    textAlign: 'center',
-    width: 20,
-  },
+
   completedCheckbox: {
     backgroundColor: '#000',
     color: '#fff',

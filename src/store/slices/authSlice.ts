@@ -34,12 +34,12 @@ export const authSlice = createSlice({
       state.isLoading = payload;
     },
     setAuthSuccess: (state, {payload}: PayloadAction<ICurentUser>) => {
-      console.log('success');
+   
       state.currentUser = payload;
       state.isAuth = true;
     },
     setLogOut: state => {
-      console.log('sss');
+
       state.isAuth = false;
       state.currentUser = undefined;
     },
@@ -52,7 +52,7 @@ export const authSlice = createSlice({
 
 export const login = () => dispatch => {
   try {
-    console.log('logddin');
+   
     dispatch(setLoading(true));
     dispatch(setLoading(false));
     const currentUser: ICurentUser = {
