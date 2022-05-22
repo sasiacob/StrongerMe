@@ -5,14 +5,19 @@ import React from 'react';
 interface IAppModalProps {
   modalVisible: boolean;
   setModalVisible: (isVisible: boolean) => void;
+  onResetValues?: () => void;
   children: React.ReactNode;
 }
 const AppModal = ({
   modalVisible,
   setModalVisible,
+  onResetValues,
   children,
 }: IAppModalProps) => {
-  const closeModal = () => setModalVisible(false);
+  const closeModal = () => {
+
+    setModalVisible(false);
+  };
 
   return (
     <Modal transparent animationType="fade" visible={modalVisible}>

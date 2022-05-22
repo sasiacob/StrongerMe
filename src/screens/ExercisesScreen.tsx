@@ -67,28 +67,33 @@ const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
   return (
     <AppModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
       <TextInput
+        placeholderTextColor={'#000'}
         onChangeText={setName}
         placeholder="Name"
         style={styles.modalInput}
       />
       <TextInput
+        placeholderTextColor={'#000'}
         onChangeText={setCategory}
         placeholder="Category"
         style={styles.modalInput}
       />
       <TextInput
+        placeholderTextColor={'#000'}
         onChangeText={text => setWeight(parseInt(text))}
         placeholder="Weight"
         style={styles.modalInput}
         keyboardType={'numeric'}
       />
       <TextInput
+        placeholderTextColor={'#000'}
         onChangeText={text => setSets(parseInt(text))}
         placeholder="Sets"
         style={styles.modalInput}
         keyboardType={'numeric'}
       />
       <TextInput
+        placeholderTextColor={'#000'}
         onChangeText={text => setReps(parseInt(text))}
         placeholder="Reps"
         style={styles.modalInput}
@@ -134,11 +139,12 @@ const ExerciseList = () => {
     <FlatList
       data={exercises}
       contentContainerStyle={{flexGrow: 1}}
+      ListHeaderComponent={<Header />}
       ListEmptyComponent={
         <View
           style={{
             flex: 1,
-        
+
             alignItems: 'center',
             justifyContent: 'center',
           }}>
@@ -161,7 +167,6 @@ const ExerciseScreen = () => {
   };
   return (
     <View style={{flex: 1}}>
-      <Header />
       <ExerciseList />
       <Pressable
         onPress={() => {
@@ -210,7 +215,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
   },
- 
+
   completedCheckbox: {
     backgroundColor: '#000',
     color: '#fff',

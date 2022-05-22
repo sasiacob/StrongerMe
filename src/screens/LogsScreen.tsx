@@ -140,12 +140,12 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   };
   const FirstPhase = () => (
     <View>
-      <TextInput
+      <TextInput placeholderTextColor={'#000'}
         onChangeText={setName}
         placeholder="WorkoutLog title"
         style={styles.modalInput}
       />
-      <TextInput
+      <TextInput placeholderTextColor={'#000'}
         onChangeText={setDescription}
         placeholder="WorkoutLog description"
         style={styles.modalInput}
@@ -226,7 +226,7 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
                 }}>
                 <View style={styles.exercisePropsContainer}>
                   <Text style={styles.exercisePropsText}>Weight:</Text>
-                  <TextInput
+                  <TextInput placeholderTextColor={'#000'}
                     onChangeText={value => {
                       onWeightChange(value, element.id);
                     }}
@@ -238,7 +238,7 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
                 </View>
                 <View style={styles.exercisePropsContainer}>
                   <Text style={styles.exercisePropsText}>Sets:</Text>
-                  <TextInput
+                  <TextInput placeholderTextColor={'#000'}
                     onChangeText={value => {
                       onSetsChange(value, element.id);
                     }}
@@ -250,7 +250,7 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
                 </View>
                 <View style={styles.exercisePropsContainer}>
                   <Text style={styles.exercisePropsText}>Reps:</Text>
-                  <TextInput
+                  <TextInput placeholderTextColor={'#000'}
                     onChangeText={value => {
                       onRepsChange(value, element.id);
                     }}

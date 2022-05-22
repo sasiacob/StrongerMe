@@ -9,12 +9,29 @@ interface IWorkoutLogCard {
 const WorkoutLogCard = ({item}: IWorkoutLogCard) => {
   return (
     <View style={styles.exerciseContainer}>
-      <Text style={styles.exerciseHeading}>{item.timstamp}</Text>
-      <Text>{item.id}</Text>
+      <Text style={styles.exerciseHeading}>
+        {new Date(parseInt(item.id)).toLocaleString()}
+      </Text>
+      <View
+        style={{
+          padding: 5,
+          justifyContent: 'space-around',
+          flexDirection: 'row',
+        }}>
+        <Text>Exercise</Text>
+        <Text>Weight</Text>
+      </View>
       <View>
         {item.exercises?.map(exercise => (
-          <View style={{padding: 5}} key={exercise.name}>
+          <View
+            key={exercise.id}
+            style={{
+              padding: 5,
+              justifyContent: 'space-around',
+              flexDirection: 'row',
+            }}>
             <Text>{exercise.name}</Text>
+            <Text>{exercise.weight}</Text>
           </View>
         ))}
       </View>
@@ -24,7 +41,6 @@ const WorkoutLogCard = ({item}: IWorkoutLogCard) => {
 export default WorkoutLogCard;
 const styles = StyleSheet.create({
   exerciseContainer: {
-    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 2,
     elevation: 4,

@@ -77,11 +77,13 @@ const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   return (
     <AppModal setModalVisible={setModalVisible} modalVisible={modalVisible}>
       <TextInput
+        placeholderTextColor={'#000'}
         onChangeText={setName}
         placeholder="Workout title"
         style={styles.modalInput}
       />
       <TextInput
+        placeholderTextColor={'#000'}
         onChangeText={setDescription}
         placeholder="Workout description"
         style={styles.modalInput}
@@ -147,6 +149,7 @@ const WorkoutList = () => {
 
   return (
     <FlatList
+      ListHeaderComponent={<Header />}
       data={workouts}
       keyExtractor={({id}) => id}
       contentContainerStyle={{flexGrow: 1}}
@@ -174,7 +177,6 @@ const WorkoutsScreen = () => {
   };
   return (
     <>
-      <Header />
       <WorkoutList />
       <Pressable
         onPress={() => {
