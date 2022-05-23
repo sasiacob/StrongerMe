@@ -1,9 +1,9 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {authSelector, ICurentUser, login, logOut, setAuthSuccess, setLogOut} from '../store/slices/authSlice';
-
+import { Text } from '../components';
 const AuthScreen = () => {
   const dispatch = useDispatch();
   const data = useSelector(authSelector);

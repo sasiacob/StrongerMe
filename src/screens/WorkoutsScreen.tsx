@@ -5,8 +5,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -20,14 +18,18 @@ import {
   workoutSelector,
 } from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
-import {WorkoutCard, AppModal} from '../components';
+import {
+  WorkoutCard,
+  AppModal,
+  Container,
+  ScreenHeader,
+  Center,
+  Button,
+  Column,
+} from '../components';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-const Header = () => (
-  <View style={styles.headerContainer}>
-    <Text style={styles.headerTitle}>My Workouts</Text>
-  </View>
-);
+import {Text, Input} from '../components';
+import {lightTheme, Spacing} from '../theme';
 const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -76,18 +78,8 @@ const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
 
   return (
     <AppModal setModalVisible={setModalVisible} modalVisible={modalVisible}>
-      <TextInput
-        placeholderTextColor={'#000'}
-        onChangeText={setName}
-        placeholder="Workout title"
-        style={styles.modalInput}
-      />
-      <TextInput
-        placeholderTextColor={'#000'}
-        onChangeText={setDescription}
-        placeholder="Workout description"
-        style={styles.modalInput}
-      />
+      <Input onChangeText={setName} placeholder="Workout title" />
+      <Input onChangeText={setDescription} placeholder="Workout description" />
       <Text>Exercises: </Text>
       <View style={{height: 200}}>
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
@@ -149,20 +141,14 @@ const WorkoutList = () => {
 
   return (
     <FlatList
-      ListHeaderComponent={<Header />}
+      ListHeaderComponent={<ScreenHeader text="Workouts" />}
       data={workouts}
       keyExtractor={({id}) => id}
-      contentContainerStyle={{flexGrow: 1}}
+      contentContainerStyle={styles.listContainer}
       ListEmptyComponent={
-        <View
-          style={{
-            flex: 1,
-
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text>No exercises</Text>
-        </View>
+        <Center fill>
+          <Text>No Workouts</Text>
+        </Center>
       }
       renderItem={renderItem}
     />
@@ -176,21 +162,23 @@ const WorkoutsScreen = () => {
     setModalVisible(false);
   };
   return (
-    <>
-      <WorkoutList />
-      <Pressable
-        onPress={() => {
-          setModalVisible(true);
-        }}
-        style={[styles.buttonContainer, styles.floatingButton]}>
-        <Text style={styles.buttonText}>+ Add Workout</Text>
-      </Pressable>
-      <AddWorkoutModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        onAddSubmit={onAddSubmit}
-      />
-    </>
+    <Container fill>
+      <Column style={lightTheme.fill}>
+        <WorkoutList />
+        <Button
+          onPress={() => {
+            setModalVisible(true);
+          }}
+          containerStyle={styles.floatingButton}
+          text="+ Add Workout"
+        />
+        <AddWorkoutModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          onAddSubmit={onAddSubmit}
+        />
+      </Column>
+    </Container>
   );
 };
 
@@ -198,7 +186,7 @@ export default WorkoutsScreen;
 
 const styles = StyleSheet.create({
   headerContainer: {
-    padding: 10,
+    paddingVertical: Spacing.base,
   },
   headerTitle: {
     color: '#3a3a3a',
@@ -265,16 +253,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 16,
   },
-  modalInput: {
-    borderBottomWidth: 1,
-    marginBottom: 16,
-    padding: 8,
-  },
+
   modalDismissButton: {
     marginLeft: 'auto',
   },
   modalDismissText: {
     fontSize: 20,
     fontWeight: '700',
+  },
+  listContainer: {
+    padding: Spacing.base,
+    flexGrow: 1,
   },
 });

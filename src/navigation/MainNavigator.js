@@ -15,7 +15,9 @@ const Tab = createBottomTabNavigator();
 const MainNavigator = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{headerShown: false}}>
+      <Tab.Navigator
+        initialRouteName={stacks.logStack}
+        screenOptions={{headerShown: false}}>
         <Tab.Screen
           options={{
             tabBarIcon: ({color, size}) => (

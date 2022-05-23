@@ -1,20 +1,17 @@
 import {
   FlatList,
-  Modal,
+  Keyboard,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Exercise, WorkoutLog} from '../API';
-import {
-  LOGS_DETAILS_SCREEN,
-  WORKOUT_DETAILS_SCREEN,
-} from '../navigation/screenNames';
+import {LOGS_DETAILS_SCREEN} from '../navigation/screenNames';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {
@@ -23,13 +20,23 @@ import {
   workoutSelector,
 } from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
-import {AppModal, WorkoutLogCard} from '../components';
+import {
+  AppModal,
+  Center,
+  WorkoutLogCard,
+  Text,
+  Input,
+  Container,
+  Column,
+  Button,
+  Row,
+  CheckBox,
+  Card,
+  ScreenHeader,
+} from '../components';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-const Header = () => (
-  <View style={styles.headerContainer}>
-    <Text style={styles.headerTitle}>My WorkoutLogs</Text>
-  </View>
-);
+import {fontSize, lightTheme, Spacing} from '../theme';
+
 const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -46,9 +53,6 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
 
   async function addWorkoutLog() {
     try {
-      const selectedExercises = exercises.filter((item, index) =>
-        selectedIndexes.includes(index),
-      );
       const newItem: WorkoutLog = {
         id: Date.now().toString(),
         exercises: [...selectedExercises],
@@ -67,6 +71,7 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
     setSelectedIndexes([]);
     setSelectedWorkoutsIndexes([]);
     setSelectedExercises([]);
+    setIsFirstPhase(true);
   }
   function closeModal() {
     setModalVisible(false);
@@ -84,6 +89,12 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
     } else {
       setSelectedWorkoutsIndexes(c => [...c, index]);
     }
+  };
+  const handleModalClose = (isVisible: boolean) => {
+    if (!isVisible) {
+      resetValues();
+    }
+    setModalVisible(isVisible);
   };
 
   const onNextPress = () => {
@@ -139,151 +150,134 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
     setSelectedExercises(newArray);
   };
   const FirstPhase = () => (
-    <View>
-      <TextInput placeholderTextColor={'#000'}
+    <Column style={styles.modalWrapper}>
+      <Input
+        value={name}
         onChangeText={setName}
         placeholder="WorkoutLog title"
-        style={styles.modalInput}
       />
-      <TextInput placeholderTextColor={'#000'}
+      <Input
+        value={description}
         onChangeText={setDescription}
         placeholder="WorkoutLog description"
-        style={styles.modalInput}
       />
-      <Text>Workout: </Text>
-      <View style={{height: 200}}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
-          {workouts.map((workout, index) => (
-            <Pressable
-              key={workout.id}
-              onPress={() => toggleSelectedWorkout(index)}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingVertical: 10,
-                }}>
-                <Text>{workout.title}</Text>
-                <Text>
-                  {selectedWorkoutsIndexes.includes(index)
-                    ? 'checked'
-                    : 'unchecked'}
-                </Text>
-              </View>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
-
-      <Text>Exercises: </Text>
-      <View style={{height: 200}}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
-          {exercises.map((exercise, index) => (
-            <Pressable key={exercise.id} onPress={() => toggleSelected(index)}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: 10,
-                }}>
-                <Text>{exercise.name}</Text>
-                <Icon
-                  size={25}
-                  name={
-                    selectedIndexes.includes(index)
-                      ? 'checkbox-marked-circle'
-                      : 'checkbox-blank-circle-outline'
-                  }
-                />
-              </View>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
-
-      <Pressable
+      <View style={styles.spacing} />
+      {workouts?.length > 0 && (
+        <Card>
+          <Text>Workout: </Text>
+          <Container transparent style={{height: 150}}>
+            <ScrollView contentContainerStyle={styles.listContainer}>
+              {workouts.map((workout, index) => (
+                <Pressable
+                  key={workout.id}
+                  onPress={() => toggleSelectedWorkout(index)}>
+                  <Container transparent style={styles.padded}>
+                    <Row spaceBetween>
+                      <Text>{workout.title}</Text>
+                      <CheckBox
+                        selected={selectedWorkoutsIndexes.includes(index)}
+                      />
+                    </Row>
+                  </Container>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </Container>
+        </Card>
+      )}
+      <View style={styles.spacing} />
+      <Card>
+        <Text>Exercises: </Text>
+        <Container transparent style={{height: 150}}>
+          <ScrollView contentContainerStyle={styles.listContainer}>
+            {exercises.map((exercise, index) => (
+              <Pressable
+                key={exercise.id}
+                onPress={() => toggleSelected(index)}>
+                <Container transparent style={styles.padded}>
+                  <Row spaceBetween>
+                    <Text>{exercise.name}</Text>
+                    <CheckBox selected={selectedIndexes.includes(index)} />
+                  </Row>
+                </Container>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </Container>
+      </Card>
+      <View style={styles.spacing} />
+      <Button
         disabled={selectedIndexes.length == 0}
         onPress={onNextPress}
-        style={styles.buttonContainer}>
-        <Text style={styles.buttonText}>Next</Text>
-      </Pressable>
-    </View>
+        text={'Next'}
+      />
+    </Column>
   );
   const SecondPhase = () => (
-    <View style={styles.modalInnerContainer}>
-      <View style={{height: 300}}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    <Column style={styles.modalWrapper}>
+      <Container transparent>
+        <ScrollView contentContainerStyle={styles.listContainer}>
           {selectedExercises.map(element => (
-            <View key={element.id}>
+            <Column key={element.id}>
               <Text>{element.name}</Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <View style={styles.exercisePropsContainer}>
+              <Row spaceBetween>
+                <Card style={styles.exercisePropsContainer}>
                   <Text style={styles.exercisePropsText}>Weight:</Text>
-                  <TextInput placeholderTextColor={'#000'}
+                  <Input
                     onChangeText={value => {
                       onWeightChange(value, element.id);
                     }}
                     placeholder="Weight"
                     keyboardType="numeric"
                     value={element.weight?.toString() ?? ''}
-                    style={styles.modalInput}
                   />
-                </View>
-                <View style={styles.exercisePropsContainer}>
+                </Card>
+                <Card style={styles.exercisePropsContainer}>
                   <Text style={styles.exercisePropsText}>Sets:</Text>
-                  <TextInput placeholderTextColor={'#000'}
+                  <Input
                     onChangeText={value => {
                       onSetsChange(value, element.id);
                     }}
                     placeholder="Sets"
                     keyboardType="numeric"
                     value={element.sets?.toString() ?? ''}
-                    style={styles.modalInput}
                   />
-                </View>
-                <View style={styles.exercisePropsContainer}>
+                </Card>
+                <Card style={styles.exercisePropsContainer}>
                   <Text style={styles.exercisePropsText}>Reps:</Text>
-                  <TextInput placeholderTextColor={'#000'}
+                  <Input
                     onChangeText={value => {
                       onRepsChange(value, element.id);
                     }}
                     placeholder="Reps"
                     keyboardType="numeric"
                     value={element.reps?.toString() ?? ''}
-                    style={styles.modalInput}
                   />
-                </View>
-              </View>
-            </View>
+                </Card>
+              </Row>
+            </Column>
           ))}
         </ScrollView>
-      </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-        <Pressable onPress={onBackPress} style={styles.buttonContainer}>
-          <Text style={styles.buttonText}>Back</Text>
-        </Pressable>
-        <Pressable onPress={addWorkoutLog} style={styles.buttonContainer}>
-          <Text style={styles.buttonText}>Save</Text>
-        </Pressable>
-      </View>
-    </View>
+      </Container>
+
+      <Row style={styles.buttonsContainer}>
+        <Button text="Back" onPress={onBackPress} />
+        <Button text="Save" onPress={addWorkoutLog} />
+      </Row>
+    </Column>
   );
   return (
-    <AppModal setModalVisible={setModalVisible} modalVisible={modalVisible}>
-      {isFirstPhase ? <FirstPhase /> : <SecondPhase />}
+    <AppModal setModalVisible={handleModalClose} modalVisible={modalVisible}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        {isFirstPhase ? FirstPhase() : SecondPhase()}
+      </TouchableWithoutFeedback>
     </AppModal>
   );
 };
+
 const WorkoutLogList = () => {
   const {workoutLogs} = useSelector(workoutSelector);
-  console.log('workoutLogs', workoutLogs);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
   async function deleteWorkoutLog(workoutLog: WorkoutLog) {
@@ -308,19 +302,14 @@ const WorkoutLogList = () => {
 
   return (
     <FlatList
-      ListHeaderComponent={<Header />}
+      ListHeaderComponent={<ScreenHeader text="Workout Logs" />}
       data={workoutLogs}
       keyExtractor={({id}) => id}
-      contentContainerStyle={{flexGrow: 1}}
+      contentContainerStyle={styles.listContainer}
       ListEmptyComponent={
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
+        <Center>
           <Text>No workouts logs</Text>
-        </View>
+        </Center>
       }
       renderItem={renderItem}
     />
@@ -334,125 +323,59 @@ const WorkoutLogsScreen = () => {
     dispatch(addWorkoutLog(workoutLog));
   };
   return (
-    <>
-      <WorkoutLogList />
-      <Pressable
-        onPress={() => {
-          setModalVisible(true);
-        }}
-        style={[styles.buttonContainer, styles.floatingButton]}>
-        <Text style={styles.buttonText}>+ Add WorkoutLog</Text>
-      </Pressable>
-      <AddWorkoutLogModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        onAddSubmit={onAddSubmit}
-      />
-    </>
+    <Container fill>
+      <Column style={lightTheme.fill}>
+        <WorkoutLogList />
+        <Button
+          onPress={() => {
+            setModalVisible(true);
+          }}
+          containerStyle={styles.floatingButton}
+          text="+ Add Workout Log"
+        />
+
+        <AddWorkoutLogModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          onAddSubmit={onAddSubmit}
+        />
+      </Column>
+    </Container>
   );
 };
 
 export default WorkoutLogsScreen;
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    padding: 10,
-  },
-  headerTitle: {
-    color: '#3a3a3a',
-    fontSize: 30,
-    fontWeight: '600',
-    paddingVertical: 16,
-  },
-  exerciseContainer: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    elevation: 4,
-
-    marginHorizontal: 8,
-    marginVertical: 4,
-    padding: 8,
-    shadowOffset: {
-      height: 1,
-      width: 1,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  exerciseHeading: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-
-  completedCheckbox: {
-    backgroundColor: '#000',
-    color: '#fff',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    padding: 16,
-  },
-  buttonContainer: {
-    alignSelf: 'center',
-    backgroundColor: '#4696ec',
-    borderRadius: 99,
-    paddingHorizontal: 8,
+  buttonsContainer: {
+    justifyContent: 'space-around',
   },
   floatingButton: {
     position: 'absolute',
     bottom: 44,
-    elevation: 6,
-    shadowOffset: {
-      height: 4,
-      width: 1,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  modalContainer: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  modalInnerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  modalInput: {
-    borderBottomWidth: 1,
-    marginBottom: 16,
-    padding: 8,
-  },
-  modalDismissButton: {
-    marginLeft: 'auto',
-  },
-  modalDismissText: {
-    fontSize: 20,
-    fontWeight: '700',
   },
   exercisePropsText: {
     color: '#00f',
-    fontSize: 12,
-    padding: 5,
+    fontSize: fontSize.small,
+    padding: Spacing.small,
   },
   exercisePropsContainer: {
     margin: 10,
-    // flexDirection: 'row',
     alignItems: 'center',
-
     flex: 1,
+  },
+  listContainer: {
+    padding: Spacing.base,
+    flexGrow: 1,
+  },
 
-    elevation: 4,
-    shadowOffset: {width: 2, height: 3},
-    shadowColor: '#aaa',
-    shadowOpacity: 0.8,
-    backgroundColor: '#fff',
-    borderColor: '#79727210',
-    borderRadius: 10,
+  spacing: {
+    marginVertical: Spacing.base,
+  },
+  modalWrapper: {
+    height: '80%',
+  },
+  padded: {
+    paddingVertical: Spacing.base,
   },
 });

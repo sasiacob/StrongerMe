@@ -10,21 +10,7 @@ interface IInitialState {
 const initialState: IInitialState = {
   workouts: [],
   exercises: [],
-  workoutLogs: [
-    {
-      id: Date.now().toString(),
-      timstamp: Date.now(),
-      exercises: [
-        {
-          __typename: 'Exercise',
-          id: '12',
-          name: 'ddd',
-          createdAt: '',
-          updatedAt: '',
-        },
-      ],
-    },
-  ],
+  workoutLogs: [],
 };
 const workoutSlice = createSlice({
   name: 'workout',
@@ -45,20 +31,7 @@ const workoutSlice = createSlice({
       );
     },
     addWorkoutLog: (state, {payload}: PayloadAction<WorkoutLog>) => {
-      console.log('add workout LOG!@');
-      const newExercise: Exercise = {
-        __typename: 'Exercise',
-        id: '12',
-        name: 'ddd',
-        createdAt: '',
-        updatedAt: '',
-      };
-      const newWorkoutLog: WorkoutLog = {
-        id: Date.now().toString(),
-        timstamp: Date.now(),
-        exercises: [newExercise],
-      };
-      state.workoutLogs = [...state.workoutLogs, payload];
+      state.workoutLogs = [payload, ...state.workoutLogs];
     },
     removeWorkoutLog: (state, {payload}: PayloadAction<string>) => {
       state.workoutLogs = state.workoutLogs.filter(

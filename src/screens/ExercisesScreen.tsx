@@ -1,18 +1,27 @@
 import React, {useState, useEffect} from 'react';
 import {
   FlatList,
-  Modal,
+  Keyboard,
   Pressable,
   StyleSheet,
-  Text,
-  TextInput,
+  TouchableWithoutFeedback,
   View,
-  Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Exercise} from '../API';
 import {EXERCISE_DETAILS_SCREEN} from '../navigation/screenNames';
-import {ExerciseCard} from '../components';
+import {
+  Button,
+  Center,
+  Column,
+  Container,
+  ExerciseCard,
+  Input,
+  Text,
+  AppModal,
+  ScreenHeader,
+  Row,
+} from '../components';
 import {useSelector} from 'react-redux';
 import {
   addExercise,
@@ -20,20 +29,31 @@ import {
   workoutSelector,
 } from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
-import AppModal from '../components/AppModal';
-const Header = () => (
-  <View style={styles.headerContainer}>
-    <Text style={styles.headerTitle}>My Exercises</Text>
-  </View>
-);
 
+import {lightTheme, Spacing} from '../theme';
+
+const initialValues = {
+  sets: 4,
+  weight: 20,
+  reps: [12, 10, 8, 12],
+};
 const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [sets, setSets] = useState(0);
-  const [weight, setWeight] = useState(0);
-  const [reps, setReps] = useState(0);
+  const [sets, setSets] = useState(initialValues.sets);
+  const [weight, setWeight] = useState(initialValues.weight);
+  const [reps, setReps] = useState<number[]>(initialValues.reps);
+  useEffect(() => {
+    if (sets == null) return;
+    if (reps.length > sets) {
+      setReps(c => c.slice(0, sets));
+    } else if (reps.length < sets) {
+      const difference = sets - reps.length;
+      const newArray: number[] = Array(difference).fill(10);
+      setReps(c => [...c, ...newArray]);
+    }
+  }, [sets]);
 
   async function addExercise() {
     try {
@@ -42,7 +62,7 @@ const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
         description: description,
         category: category,
         sets: sets,
-        reps: [reps],
+        reps: [...reps],
         weight: weight,
         __typename: 'Exercise',
         id: Date.now().toString(),
@@ -55,54 +75,87 @@ const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
   }
   function resetValues() {
     setName('');
-    setWeight(0);
+    setWeight(initialValues.weight);
     setCategory('');
     setDescription('');
-    setSets(0);
+    setSets(initialValues.sets);
+    setReps(initialValues.reps);
   }
-  function closeModal() {
-    setModalVisible(false);
-  }
+  const onSetsChange = (text: string) => {
+    const value = validNumber(text);
+    if (value == null) {
+      setSets(null);
+    }
+    if (value >= 1 && value < 7) {
+      setSets(value);
+    }
+  };
+
+  const onRepsChange = (text: string, index) => {
+    const value = validNumber(text);
+
+    const newArray = reps.map((element, i) => {
+      if (index == i) {
+        return value;
+      } else return element;
+    });
+    setReps(newArray);
+  };
+
+  const onWeightChange = (text: string) => {
+    const value = validNumber(text);
+    if (value == null) {
+      return setWeight(null);
+    }
+
+    setWeight(value);
+  };
+
+  const validNumber = (text: string) => {
+    const value = parseInt(text);
+    if (isNaN(value)) {
+      return null;
+    } else return value;
+  };
+  const onSetModalVisible = (isVisible: boolean) => {
+    if (!isVisible) {
+      resetValues();
+    }
+    setModalVisible(isVisible);
+  };
 
   return (
-    <AppModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
-      <TextInput
-        placeholderTextColor={'#000'}
-        onChangeText={setName}
-        placeholder="Name"
-        style={styles.modalInput}
-      />
-      <TextInput
-        placeholderTextColor={'#000'}
-        onChangeText={setCategory}
-        placeholder="Category"
-        style={styles.modalInput}
-      />
-      <TextInput
-        placeholderTextColor={'#000'}
-        onChangeText={text => setWeight(parseInt(text))}
-        placeholder="Weight"
-        style={styles.modalInput}
-        keyboardType={'numeric'}
-      />
-      <TextInput
-        placeholderTextColor={'#000'}
-        onChangeText={text => setSets(parseInt(text))}
-        placeholder="Sets"
-        style={styles.modalInput}
-        keyboardType={'numeric'}
-      />
-      <TextInput
-        placeholderTextColor={'#000'}
-        onChangeText={text => setReps(parseInt(text))}
-        placeholder="Reps"
-        style={styles.modalInput}
-        keyboardType={'numeric'}
-      />
+    <AppModal modalVisible={modalVisible} setModalVisible={onSetModalVisible}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View>
+          <Input onChangeText={setName} label="Name" />
+          <Input onChangeText={setCategory} label="Category" />
+          <Input
+            onChangeText={onWeightChange}
+            label="Weight"
+            value={weight?.toString() ?? ''}
+            keyboardType={'numeric'}
+          />
+          <Input
+            onChangeText={onSetsChange}
+            value={sets?.toString() ?? ''}
+            label="Sets"
+            keyboardType={'numeric'}
+          />
+          <Row>
+            {reps.map((element, index) => (
+              <Input
+                onChangeText={text => onRepsChange(text, index)}
+                label="Reps"
+                keyboardType={'numeric'}
+                value={element?.toString() ?? ''}
+              />
+            ))}
+          </Row>
 
-      <Pressable onPress={addExercise} style={styles.buttonContainer}>
-        <Text style={styles.buttonText}>Save Exercise</Text>
-      </Pressable>
+          <Button text="Save Exercise" onPress={addExercise} />
+        </View>
+      </TouchableWithoutFeedback>
     </AppModal>
   );
 };
@@ -138,18 +191,14 @@ const ExerciseList = () => {
   return (
     <FlatList
       data={exercises}
-      contentContainerStyle={{flexGrow: 1}}
-      ListHeaderComponent={<Header />}
+      contentContainerStyle={styles.listContainer}
+      ListHeaderComponent={<ScreenHeader text="My Exercises" />}
       ListEmptyComponent={
-        <View
-          style={{
-            flex: 1,
-
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text>No exercises</Text>
-        </View>
+        <Container fill>
+          <Center fill>
+            <Text>No excercises</Text>
+          </Center>
+        </Container>
       }
       keyExtractor={({id}) => id}
       renderItem={renderItem}
@@ -159,112 +208,52 @@ const ExerciseList = () => {
 
 const ExerciseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
+
   const dispatch = useDispatch();
 
+  const enableModal = () => {
+    setModalVisible(true);
+  };
+  const disableModal = () => {
+    setModalVisible(false);
+  };
   const onAddSubmit = (exercise: Exercise) => {
     dispatch(addExercise(exercise));
     setModalVisible(false);
   };
   return (
-    <View style={{flex: 1}}>
-      <ExerciseList />
-      <Pressable
-        onPress={() => {
-          setModalVisible(true);
-        }}
-        style={[styles.buttonContainer, styles.floatingButton]}>
-        <Text style={styles.buttonText}>+ Add Exercise</Text>
-      </Pressable>
+    <Container fill>
+      <Column style={{flex: 1}}>
+        <ExerciseList />
+        <Button
+          onPress={enableModal}
+          containerStyle={styles.floatingButton}
+          text="+ Add Exercise"
+        />
 
-      <AddExerciseModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        onSubmit={onAddSubmit}
-      />
-    </View>
+        <AddExerciseModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          onSubmit={onAddSubmit}
+        />
+      </Column>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
   headerContainer: {
-    padding: 10,
-  },
-  headerTitle: {
-    color: '#3a3a3a',
-    fontSize: 30,
-    fontWeight: '600',
-    paddingVertical: 16,
-  },
-  exerciseContainer: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    elevation: 4,
-    flexDirection: 'row',
-    marginHorizontal: 8,
-    marginVertical: 4,
-    padding: 8,
-    shadowOffset: {
-      height: 1,
-      width: 1,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  exerciseHeading: {
-    fontSize: 20,
-    fontWeight: '600',
+    paddingVertical: Spacing.triple,
   },
 
-  completedCheckbox: {
-    backgroundColor: '#000',
-    color: '#fff',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    padding: 16,
-  },
-  buttonContainer: {
-    alignSelf: 'center',
-    backgroundColor: '#4696ec',
-    borderRadius: 99,
-    paddingHorizontal: 8,
-  },
   floatingButton: {
     position: 'absolute',
     bottom: 44,
-    elevation: 6,
-    shadowOffset: {
-      height: 4,
-      width: 1,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
   },
-  modalContainer: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  modalInnerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  modalInput: {
-    borderBottomWidth: 1,
-    marginBottom: 16,
-    padding: 8,
-  },
-  modalDismissButton: {
-    marginLeft: 'auto',
-  },
-  modalDismissText: {
-    fontSize: 20,
-    fontWeight: '700',
+
+  listContainer: {
+    padding: Spacing.base,
+    flexGrow: 1,
   },
 });
 

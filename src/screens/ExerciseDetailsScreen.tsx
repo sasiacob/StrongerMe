@@ -1,7 +1,7 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Exercise} from '../API';
-
+import { Text } from '../components';
 const ExerciseDetailsScreen = ({route}) => {
   const exercise: Exercise = route.params.exercise;
   return (
