@@ -1,6 +1,7 @@
 import {Modal, Pressable, StyleSheet, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React from 'react';
+import {Colors} from '../theme';
 
 interface IAppModalProps {
   modalVisible: boolean;
@@ -15,7 +16,6 @@ const AppModal = ({
   children,
 }: IAppModalProps) => {
   const closeModal = () => {
-
     setModalVisible(false);
   };
 
@@ -41,11 +41,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
+    
   },
   modalInnerContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.surface,
+    height: '80%',
     borderRadius: 16,
-    justifyContent: 'center',
+
     padding: 16,
   },
   modalDismissButton: {

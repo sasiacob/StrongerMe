@@ -1,16 +1,13 @@
 import {
   FlatList,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Exercise, WorkoutLog} from '../API';
+import {Exercise, Workout, WorkoutLog} from '../API';
 import {LOGS_DETAILS_SCREEN} from '../navigation/screenNames';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -33,29 +30,33 @@ import {
   CheckBox,
   Card,
   ScreenHeader,
+  ExerciseDataInput,
 } from '../components';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {fontSize, lightTheme, Spacing} from '../theme';
+import {lightTheme, Spacing} from '../theme';
+
+interface SelectableWorkout extends Workout {
+  isSelected?: boolean;
+}
+interface SelectableExercise extends Exercise {
+  isSelected?: boolean;
+}
 
 const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [sets, setSets] = useState(0);
-  const [weight, setWeight] = useState(0);
   const [isFirstPhase, setIsFirstPhase] = useState(true);
+
   const {exercises, workouts} = useSelector(workoutSelector);
-  const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
-  const [selectedWorkoutsIndexes, setSelectedWorkoutsIndexes] = useState<
-    number[]
-  >([]);
-  const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
+  const [selectableWorkouts, setSelectableWorkouts] =
+    useState<SelectableWorkout[]>(workouts);
+  const [selectableExercises, setSelectableExercises] =
+    useState<SelectableExercise[]>(exercises);
 
   async function addWorkoutLog() {
     try {
       const newItem: WorkoutLog = {
         id: Date.now().toString(),
-        exercises: [...selectedExercises],
+        exercises: [...filteredExercises()],
         timstamp: Date.now(),
       };
       onAddSubmit(newItem);
@@ -64,32 +65,49 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   }
   function resetValues() {
     setName('');
-    setWeight(0);
-    setCategory('');
     setDescription('');
-    setSets(0);
-    setSelectedIndexes([]);
-    setSelectedWorkoutsIndexes([]);
-    setSelectedExercises([]);
+    setSelectableExercises(exercises);
+    setSelectableWorkouts(workouts);
     setIsFirstPhase(true);
   }
-  function closeModal() {
-    setModalVisible(false);
-  }
-  const toggleSelected = (index: number) => {
-    if (selectedIndexes.includes(index)) {
-      setSelectedIndexes(c => c.filter(i => i != index));
-    } else {
-      setSelectedIndexes(c => [...c, index]);
-    }
+
+  const filteredExercises = () =>
+    selectableExercises.filter(el => el.isSelected);
+
+  const onToggleExercise = (id: string) => {
+    const updatedArray = selectableExercises.map(element => {
+      if (element.id == id) {
+        if (element.isSelected == true) return {...element, isSelected: false};
+        else {
+          return {...element, isSelected: true};
+        }
+      }
+      return element;
+    });
+    setSelectableExercises(updatedArray);
   };
-  const toggleSelectedWorkout = (index: number) => {
-    if (selectedWorkoutsIndexes.includes(index)) {
-      setSelectedWorkoutsIndexes(c => c.filter(i => i != index));
-    } else {
-      setSelectedWorkoutsIndexes(c => [...c, index]);
-    }
+  const onToggleWorkout = (id: string) => {
+    let exercisesIds: string[];
+    const updatedArray = selectableWorkouts.map(element => {
+      if (element.id == id) {
+        exercisesIds = element.exercises.map(el => el.id);
+        if (element.isSelected == true) return {...element, isSelected: false};
+        else {
+          return {...element, isSelected: true};
+        }
+      }
+      return element;
+    });
+    const updatedExArray = selectableExercises.map(element => {
+      if (exercisesIds.includes(element.id)) {
+        return {...element, isSelected: true};
+      }
+      return {...element, isSelected: false};
+    });
+    setSelectableExercises(updatedExArray);
+    setSelectableWorkouts(updatedArray);
   };
+
   const handleModalClose = (isVisible: boolean) => {
     if (!isVisible) {
       resetValues();
@@ -98,164 +116,93 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   };
 
   const onNextPress = () => {
-    if (selectedIndexes.length == 0) return;
-    const filteredExercises = exercises.filter((element, index) =>
-      selectedIndexes.includes(index),
-    );
-
-    setSelectedExercises(filteredExercises);
     setIsFirstPhase(false);
   };
+
   const onBackPress = () => {
     setIsFirstPhase(true);
   };
-  const onWeightChange = (value: string, id: string) => {
-    let newValue = parseInt(value);
-    if (isNaN(newValue)) {
-      newValue = null;
-    }
 
-    const newArray = selectedExercises.map(element => {
-      if (element.id == id) {
-        return {...element, weight: newValue};
+  const onExerciseUpdate = (updatedItem: Exercise) => {
+    const updatedArr: SelectableExercise[] = filteredExercises().map(el => {
+      if (el.id == updatedItem.id) {
+        return {...updatedItem, isSelected: true};
       }
-      return element;
+      return el;
     });
-    setSelectedExercises(newArray);
+    setSelectableExercises(updatedArr);
   };
-  const onRepsChange = (value: string, id: string) => {
-    let newValue = parseInt(value);
-    if (isNaN(newValue)) {
-      newValue = null;
-    }
-    const newArray = selectedExercises.map(element => {
-      if (element.id == id) {
-        return {...element, reps: [newValue]};
-      }
-      return element;
-    });
-    setSelectedExercises(newArray);
-  };
-  const onSetsChange = (value: string, id: string) => {
-    let newValue = parseInt(value);
-    if (isNaN(newValue)) {
-      newValue = null;
-    }
-    const newArray = selectedExercises.map(element => {
-      if (element.id == id) {
-        return {...element, sets: newValue};
-      }
-      return element;
-    });
-    setSelectedExercises(newArray);
-  };
+
   const FirstPhase = () => (
-    <Column style={styles.modalWrapper}>
+    <Column style={{flex: 1}}>
       <Input
         value={name}
         onChangeText={setName}
         placeholder="WorkoutLog title"
       />
-      <Input
-        value={description}
-        onChangeText={setDescription}
-        placeholder="WorkoutLog description"
-      />
+
       <View style={styles.spacing} />
       {workouts?.length > 0 && (
-        <Card>
+        <Card style={{minHeight: 150, maxHeight: '40%'}}>
           <Text>Workout: </Text>
-          <Container transparent style={{height: 150}}>
-            <ScrollView contentContainerStyle={styles.listContainer}>
-              {workouts.map((workout, index) => (
-                <Pressable
-                  key={workout.id}
-                  onPress={() => toggleSelectedWorkout(index)}>
-                  <Container transparent style={styles.padded}>
-                    <Row spaceBetween>
-                      <Text>{workout.title}</Text>
-                      <CheckBox
-                        selected={selectedWorkoutsIndexes.includes(index)}
-                      />
-                    </Row>
-                  </Container>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </Container>
+
+          <ScrollView
+            style={{flex: 1}}
+            contentContainerStyle={styles.listContainer}>
+            {selectableWorkouts.map((workout, index) => (
+              <TouchableOpacity
+                key={workout.id}
+                onPress={() => onToggleWorkout(workout.id)}>
+                <Container transparent style={styles.padded}>
+                  <Row spaceBetween>
+                    <Text>{workout.title}</Text>
+                    <CheckBox selected={workout.isSelected} />
+                  </Row>
+                </Container>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </Card>
       )}
       <View style={styles.spacing} />
-      <Card>
+      <Card style={{minHeight: 150, maxHeight: '40%'}}>
         <Text>Exercises: </Text>
-        <Container transparent style={{height: 150}}>
-          <ScrollView contentContainerStyle={styles.listContainer}>
-            {exercises.map((exercise, index) => (
-              <Pressable
-                key={exercise.id}
-                onPress={() => toggleSelected(index)}>
-                <Container transparent style={styles.padded}>
-                  <Row spaceBetween>
-                    <Text>{exercise.name}</Text>
-                    <CheckBox selected={selectedIndexes.includes(index)} />
-                  </Row>
-                </Container>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </Container>
+
+        <ScrollView contentContainerStyle={styles.listContainer}>
+          {selectableExercises.map(exercise => (
+            <TouchableOpacity
+              key={exercise.id}
+              onPress={() => onToggleExercise(exercise.id)}>
+              <Container transparent style={styles.padded}>
+                <Row spaceBetween>
+                  <Text>{exercise.name}</Text>
+                  <CheckBox selected={exercise.isSelected} />
+                </Row>
+              </Container>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </Card>
       <View style={styles.spacing} />
       <Button
-        disabled={selectedIndexes.length == 0}
+        disabled={filteredExercises().length == 0}
         onPress={onNextPress}
         text={'Next'}
       />
     </Column>
   );
   const SecondPhase = () => (
-    <Column style={styles.modalWrapper}>
-      <Container transparent>
+    <Column style={{flex: 1}}>
+      <Container fill transparent>
         <ScrollView contentContainerStyle={styles.listContainer}>
-          {selectedExercises.map(element => (
-            <Column key={element.id}>
-              <Text>{element.name}</Text>
-              <Row spaceBetween>
-                <Card style={styles.exercisePropsContainer}>
-                  <Text style={styles.exercisePropsText}>Weight:</Text>
-                  <Input
-                    onChangeText={value => {
-                      onWeightChange(value, element.id);
-                    }}
-                    placeholder="Weight"
-                    keyboardType="numeric"
-                    value={element.weight?.toString() ?? ''}
-                  />
-                </Card>
-                <Card style={styles.exercisePropsContainer}>
-                  <Text style={styles.exercisePropsText}>Sets:</Text>
-                  <Input
-                    onChangeText={value => {
-                      onSetsChange(value, element.id);
-                    }}
-                    placeholder="Sets"
-                    keyboardType="numeric"
-                    value={element.sets?.toString() ?? ''}
-                  />
-                </Card>
-                <Card style={styles.exercisePropsContainer}>
-                  <Text style={styles.exercisePropsText}>Reps:</Text>
-                  <Input
-                    onChangeText={value => {
-                      onRepsChange(value, element.id);
-                    }}
-                    placeholder="Reps"
-                    keyboardType="numeric"
-                    value={element.reps?.toString() ?? ''}
-                  />
-                </Card>
-              </Row>
-            </Column>
+          {filteredExercises().map(exercise => (
+            <Card key={exercise.id}>
+              <Text strong>{exercise.name}</Text>
+              <ExerciseDataInput
+                exercise={exercise}
+                onUpdate={onExerciseUpdate}
+              />
+            </Card>
           ))}
         </ScrollView>
       </Container>
@@ -268,9 +215,7 @@ const AddWorkoutLogModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   );
   return (
     <AppModal setModalVisible={handleModalClose} modalVisible={modalVisible}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {isFirstPhase ? FirstPhase() : SecondPhase()}
-      </TouchableWithoutFeedback>
+      {isFirstPhase ? FirstPhase() : SecondPhase()}
     </AppModal>
   );
 };
@@ -349,21 +294,13 @@ export default WorkoutLogsScreen;
 const styles = StyleSheet.create({
   buttonsContainer: {
     justifyContent: 'space-around',
+    marginTop: Spacing.double,
   },
   floatingButton: {
     position: 'absolute',
     bottom: 44,
   },
-  exercisePropsText: {
-    color: '#00f',
-    fontSize: fontSize.small,
-    padding: Spacing.small,
-  },
-  exercisePropsContainer: {
-    margin: 10,
-    alignItems: 'center',
-    flex: 1,
-  },
+
   listContainer: {
     padding: Spacing.base,
     flexGrow: 1,
@@ -372,9 +309,7 @@ const styles = StyleSheet.create({
   spacing: {
     marginVertical: Spacing.base,
   },
-  modalWrapper: {
-    height: '80%',
-  },
+
   padded: {
     paddingVertical: Spacing.base,
   },

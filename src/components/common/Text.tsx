@@ -4,12 +4,21 @@ import {lightTheme} from '../../theme';
 
 interface ITextProps extends TextProps {
   children: React.ReactNode;
+  strong?: boolean;
 }
 
-const Text = ({children, style}: ITextProps) => {
-  return <RNText style={[lightTheme.bodyText1, style]}>{children}</RNText>;
+const Text = ({children, strong = false, style}: ITextProps) => {
+  return (
+    <RNText style={[lightTheme.bodyText1, strong && styles.strong, style]}>
+      {children}
+    </RNText>
+  );
 };
 
 export default Text;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  strong: {
+    fontWeight: '600',
+  },
+});

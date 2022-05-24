@@ -1,10 +1,9 @@
 import {
   FlatList,
-  Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -26,25 +25,21 @@ import {
   Center,
   Button,
   Column,
+  Row,
+  CheckBox,
 } from '../components';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Text, Input} from '../components';
 import {lightTheme, Spacing} from '../theme';
 const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [sets, setSets] = useState(0);
-  const [weight, setWeight] = useState(0);
   const {exercises} = useSelector(workoutSelector);
-  const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   async function addWorkout() {
     try {
-      const selectedExercises = exercises.filter((item, index) =>
-        selectedIndexes.includes(index),
+      const selectedExercises = exercises.filter(item =>
+        selectedIds.includes(item.id),
       );
-
       const newItem: Workout = {
         __typename: 'Workout',
         id: Date.now().toString(),
@@ -59,50 +54,34 @@ const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
   }
   function resetValues() {
     setName('');
-    setWeight(0);
-    setCategory('');
-    setDescription('');
-    setSets(0);
-    setSelectedIndexes([]);
+
+    setSelectedIds([]);
   }
-  function closeModal() {
-    setModalVisible(false);
-  }
-  const toggleSelected = (index: number) => {
-    if (selectedIndexes.includes(index)) {
-      setSelectedIndexes(c => c.filter(i => i != index));
+
+  const toggleSelected = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(c => c.filter(i => i != id));
     } else {
-      setSelectedIndexes(c => [...c, index]);
+      setSelectedIds(c => [...c, id]);
     }
   };
 
   return (
     <AppModal setModalVisible={setModalVisible} modalVisible={modalVisible}>
       <Input onChangeText={setName} placeholder="Workout title" />
-      <Input onChangeText={setDescription} placeholder="Workout description" />
+
       <Text>Exercises: </Text>
       <View style={{height: 200}}>
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
           {exercises.map((exercise, index) => (
-            <Pressable key={exercise.id} onPress={() => toggleSelected(index)}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: 10,
-                }}>
+            <TouchableOpacity
+              key={exercise.id}
+              onPress={() => toggleSelected(exercise.id)}>
+              <Row style={styles.exerciseRow} spaceBetween>
                 <Text>{exercise.name}</Text>
-                <Icon
-                  size={25}
-                  name={
-                    selectedIndexes.includes(index)
-                      ? 'checkbox-marked-circle'
-                      : 'checkbox-blank-circle-outline'
-                  }
-                />
-              </View>
-            </Pressable>
+                <CheckBox selected={selectedIds.includes(exercise.id)} />
+              </Row>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
@@ -185,40 +164,6 @@ const WorkoutsScreen = () => {
 export default WorkoutsScreen;
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    paddingVertical: Spacing.base,
-  },
-  headerTitle: {
-    color: '#3a3a3a',
-    fontSize: 30,
-    fontWeight: '600',
-    paddingVertical: 16,
-  },
-  exerciseContainer: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    elevation: 4,
-
-    marginHorizontal: 8,
-    marginVertical: 4,
-    padding: 8,
-    shadowOffset: {
-      height: 1,
-      width: 1,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  exerciseHeading: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-
-  completedCheckbox: {
-    backgroundColor: '#000',
-    color: '#fff',
-  },
   buttonText: {
     color: '#fff',
     fontWeight: '600',
@@ -241,28 +186,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
-  modalContainer: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  modalInnerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    justifyContent: 'center',
-    padding: 16,
-  },
 
-  modalDismissButton: {
-    marginLeft: 'auto',
-  },
-  modalDismissText: {
-    fontSize: 20,
-    fontWeight: '700',
-  },
   listContainer: {
     padding: Spacing.base,
     flexGrow: 1,
+  },
+  exerciseRow: {
+    paddingVertical: Spacing.base,
   },
 });

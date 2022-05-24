@@ -1,12 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  FlatList,
-  Keyboard,
-  Pressable,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {FlatList, Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Exercise} from '../API';
 import {EXERCISE_DETAILS_SCREEN} from '../navigation/screenNames';
@@ -21,6 +14,9 @@ import {
   AppModal,
   ScreenHeader,
   Row,
+  NumericSelector,
+  Divider,
+  ExerciseDataInput,
 } from '../components';
 import {useSelector} from 'react-redux';
 import {
@@ -30,93 +26,44 @@ import {
 } from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
 
-import {lightTheme, Spacing} from '../theme';
+import {Spacing} from '../theme';
 
-const initialValues = {
+const initialValue: Exercise = {
   sets: 4,
   weight: 20,
+  category: '',
   reps: [12, 10, 8, 12],
+  __typename: 'Exercise',
+  id: '',
+  name: '',
+  createdAt: '',
+  updatedAt: '',
 };
 const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [sets, setSets] = useState(initialValues.sets);
-  const [weight, setWeight] = useState(initialValues.weight);
-  const [reps, setReps] = useState<number[]>(initialValues.reps);
-  useEffect(() => {
-    if (sets == null) return;
-    if (reps.length > sets) {
-      setReps(c => c.slice(0, sets));
-    } else if (reps.length < sets) {
-      const difference = sets - reps.length;
-      const newArray: number[] = Array(difference).fill(10);
-      setReps(c => [...c, ...newArray]);
-    }
-  }, [sets]);
+  const [exercise, setExercise] = useState<Exercise>(initialValue);
 
   async function addExercise() {
     try {
       const newItem: Exercise = {
-        name: name,
-        description: description,
-        category: category,
-        sets: sets,
-        reps: [...reps],
-        weight: weight,
-        __typename: 'Exercise',
+        ...exercise,
         id: Date.now().toString(),
-        createdAt: '',
-        updatedAt: '',
       };
       onSubmit(newItem);
       resetValues();
     } catch (e) {}
   }
   function resetValues() {
-    setName('');
-    setWeight(initialValues.weight);
-    setCategory('');
-    setDescription('');
-    setSets(initialValues.sets);
-    setReps(initialValues.reps);
+    setExercise(initialValue);
   }
-  const onSetsChange = (text: string) => {
-    const value = validNumber(text);
-    if (value == null) {
-      setSets(null);
-    }
-    if (value >= 1 && value < 7) {
-      setSets(value);
-    }
+  const onNameChange = (text: string) => {
+    const updated = {...exercise, name: text};
+    setExercise(updated);
+  };
+  const onCategoryChange = (text: string) => {
+    const updated = {...exercise, category: text};
+    setExercise(updated);
   };
 
-  const onRepsChange = (text: string, index) => {
-    const value = validNumber(text);
-
-    const newArray = reps.map((element, i) => {
-      if (index == i) {
-        return value;
-      } else return element;
-    });
-    setReps(newArray);
-  };
-
-  const onWeightChange = (text: string) => {
-    const value = validNumber(text);
-    if (value == null) {
-      return setWeight(null);
-    }
-
-    setWeight(value);
-  };
-
-  const validNumber = (text: string) => {
-    const value = parseInt(text);
-    if (isNaN(value)) {
-      return null;
-    } else return value;
-  };
   const onSetModalVisible = (isVisible: boolean) => {
     if (!isVisible) {
       resetValues();
@@ -126,37 +73,39 @@ const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
 
   return (
     <AppModal modalVisible={modalVisible} setModalVisible={onSetModalVisible}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
-          <Input onChangeText={setName} label="Name" />
-          <Input onChangeText={setCategory} label="Category" />
-          <Input
-            onChangeText={onWeightChange}
-            label="Weight"
-            value={weight?.toString() ?? ''}
-            keyboardType={'numeric'}
-          />
-          <Input
-            onChangeText={onSetsChange}
-            value={sets?.toString() ?? ''}
-            label="Sets"
-            keyboardType={'numeric'}
-          />
-          <Row>
-            {reps.map((element, index) => (
-              <Input
-                onChangeText={text => onRepsChange(text, index)}
-                label="Reps"
-                keyboardType={'numeric'}
-                value={element?.toString() ?? ''}
-              />
-            ))}
-          </Row>
+      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+      <View style={{flex: 1}}>
+        <ScrollView>
+          <Input onChangeText={onNameChange} label="Name" />
+          <Input onChangeText={onCategoryChange} label="Category" />
+          <ExerciseDataInput exercise={exercise} onUpdate={setExercise} />
+        </ScrollView>
 
-          <Button text="Save Exercise" onPress={addExercise} />
-        </View>
-      </TouchableWithoutFeedback>
+        <Button text="Save Exercise" onPress={addExercise} />
+      </View>
+      {/* </TouchableWithoutFeedback> */}
     </AppModal>
+  );
+};
+const NumericGroupSelector = ({
+  values,
+  onValueChange,
+}: {
+  values: number[];
+  onValueChange: (newValue: number, index: number) => void;
+}) => {
+  return (
+    <Column>
+      {values.map((element, index) => (
+        <Row spaceBetween key={index} style={styles.repsRow}>
+          <Text>Set {index}</Text>
+          <NumericSelector
+            onChange={newValue => onValueChange(newValue, index)}
+            value={element}
+          />
+        </Row>
+      ))}
+    </Column>
   );
 };
 
@@ -254,6 +203,9 @@ const styles = StyleSheet.create({
   listContainer: {
     padding: Spacing.base,
     flexGrow: 1,
+  },
+  repsRow: {
+    margin: Spacing.small,
   },
 });
 
