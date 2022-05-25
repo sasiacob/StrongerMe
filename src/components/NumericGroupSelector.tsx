@@ -6,11 +6,13 @@ import {Spacing} from '../theme';
 interface INumericGroupSelectorProps {
   values: number[];
   onValueChange: (newValue: number, index: number) => void;
+  disabled?: boolean;
 }
 
 const NumericGroupSelector = ({
   values,
   onValueChange,
+  disabled = false,
 }: INumericGroupSelectorProps) => {
   return (
     <Column>
@@ -18,6 +20,7 @@ const NumericGroupSelector = ({
         <Row spaceBetween key={index} style={styles.repsRow}>
           <Text>Set {index}</Text>
           <NumericSelector
+            disabled={disabled}
             onChange={newValue => onValueChange(newValue, index)}
             value={element}
           />

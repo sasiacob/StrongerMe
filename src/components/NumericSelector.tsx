@@ -7,17 +7,32 @@ interface ISelectorProps {
   value: number;
   min?: number;
   max?: number;
+  disabled?: boolean;
   onChange?: (value: number) => void;
 }
-const Selector = ({value, onChange, min = 0, max = 100}: ISelectorProps) => {
+const Selector = ({
+  value,
+  onChange,
+  min = 0,
+  max = 100,
+  disabled = false,
+}: ISelectorProps) => {
   const onIncrement = () => {
     if (value < max) onChange(value + 1);
   };
   const onDecrement = () => {
     if (value > min) onChange(value - 1);
   };
+  if (disabled)
+    return (
+      <Row style={styles.row}>
+        <View style={styles.valueContainer}>
+          <Text style={styles.text}>{value}</Text>
+        </View>
+      </Row>
+    );
   return (
-    <Row>
+    <Row style={styles.row}>
       <TouchableOpacity style={styles.iconContainer} onPress={onDecrement}>
         <Icon name="chevron-down" size={25} color={Colors.primary} />
       </TouchableOpacity>
@@ -44,5 +59,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: '600',
+  },
+  row: {
+    minHeight: 40,
   },
 });

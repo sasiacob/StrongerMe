@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {FlatList, Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Exercise} from '../API';
-import {EXERCISE_DETAILS_SCREEN} from '../navigation/screenNames';
+import {ADD_EXERCISE_SCREEN, EXERCISE_DETAILS_SCREEN} from '../navigation/screenNames';
 import {
   Button,
   Center,
@@ -27,6 +27,7 @@ import {
 import {useDispatch} from 'react-redux';
 
 import {Spacing} from '../theme';
+import AddExerciseScreen from './AddExerciseScreen';
 
 const initialValue: Exercise = {
   sets: 4,
@@ -39,16 +40,28 @@ const initialValue: Exercise = {
   createdAt: '',
   updatedAt: '',
 };
-const AddExerciseModal = ({modalVisible, setModalVisible, onSubmit}) => {
-  const [exercise, setExercise] = useState<Exercise>(initialValue);
+const AddExerciseModal = ({
+  modalVisible,
+  setModalVisible,
+  onSubmit,
+  item = null,
+}) => {
+  const [exercise, setExercise] = useState<Exercise>(item ?? initialValue);
 
   async function addExercise() {
     try {
-      const newItem: Exercise = {
-        ...exercise,
-        id: Date.now().toString(),
-      };
-      onSubmit(newItem);
+      // IF ITEM HAS ID, UPDATE. IF NOT, ADD
+      let updatedItem: Exercise;
+      if (exercise.id == null) {
+        updatedItem = {
+          ...exercise,
+          id: Date.now().toString(),
+        };
+      } else {
+        updatedItem = {...exercise};
+      }
+
+      onSubmit(updatedItem);
       resetValues();
     } catch (e) {}
   }
@@ -157,11 +170,12 @@ const ExerciseList = () => {
 
 const ExerciseScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [exercise, setExercise] = useState<Exercise>();
   const dispatch = useDispatch();
-
+  const navigation = useNavigation();
   const enableModal = () => {
-    setModalVisible(true);
+    //setModalVisible(true);
+    navigation.navigate(ADD_EXERCISE_SCREEN);
   };
   const disableModal = () => {
     setModalVisible(false);
@@ -184,6 +198,7 @@ const ExerciseScreen = () => {
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
           onSubmit={onAddSubmit}
+          item={exercise}
         />
       </Column>
     </Container>

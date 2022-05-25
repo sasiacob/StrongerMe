@@ -13,10 +13,14 @@ import {
 interface IExerciseDataInputProps {
   exercise: Exercise;
   onUpdate: (updatedItem: Exercise) => void;
+  editable?: boolean;
 }
 
-const ExerciseDataInput = ({exercise, onUpdate}: IExerciseDataInputProps) => {
-  
+const ExerciseDataInput = ({
+  exercise,
+  onUpdate,
+  editable = true,
+}: IExerciseDataInputProps) => {
   const validNumber = (text: string) => {
     const value = parseInt(text);
     if (isNaN(value)) {
@@ -57,6 +61,7 @@ const ExerciseDataInput = ({exercise, onUpdate}: IExerciseDataInputProps) => {
   return (
     <View>
       <Input
+        editable={editable}
         onChangeText={onWeightChange}
         label="Weight"
         value={exercise.weight?.toString() ?? ''}
@@ -64,11 +69,16 @@ const ExerciseDataInput = ({exercise, onUpdate}: IExerciseDataInputProps) => {
       />
       <Row spaceBetween>
         <Text>Sets</Text>
-        <NumericSelector value={exercise.sets} onChange={onSetsChange} />
+        <NumericSelector
+          value={exercise.sets}
+          disabled={!editable}
+          onChange={onSetsChange}
+        />
       </Row>
       <Divider />
       <Text strong>Reps</Text>
       <NumericGroupSelector
+        disabled={!editable}
         values={exercise.reps}
         onValueChange={onRepsChange}
       />
