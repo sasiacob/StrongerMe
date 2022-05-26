@@ -6,7 +6,7 @@ export const fontSize: FontSizeTheme = {
   small: 12,
   regular: 14,
   large: 16,
-  xLarge:24,
+  xLarge: 24,
   title: 30,
 };
 export const Spacing: SpacingTheme = {

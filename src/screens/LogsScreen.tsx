@@ -1,17 +1,10 @@
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
+import {FlatList, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
 import {WorkoutLog} from '../API';
 import {ADD_LOGS_SCREEN, LOG_DETAILS_SCREEN} from '../navigation/screenNames';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import {
-  removeWorkoutLog,
-  workoutSelector,
-} from '../store/slices/workoutSlice';
+import {removeWorkoutLog, workoutSelector} from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
 import {
   Center,

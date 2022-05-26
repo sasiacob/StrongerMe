@@ -1,6 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
-import {ColorTheme} from '../../theme/theme.interface';
 import {Colors, Spacing} from '../../theme';
 
 interface IDividerProps {
@@ -11,7 +10,8 @@ interface IDividerProps {
 const Divider = ({color, width}: IDividerProps) => {
   return (
     <View
-      style={[ styles.container, 
+      style={[
+        styles.container,
         width ? {borderBottomWidth: width} : styles.defaultWidth,
         color ? {borderBottomColor: color} : styles.defaultColor,
       ]}
@@ -22,8 +22,8 @@ const Divider = ({color, width}: IDividerProps) => {
 export default Divider;
 
 const styles = StyleSheet.create({
-  container:{
-    marginVertical:Spacing.small
+  container: {
+    marginVertical: Spacing.small,
   },
   defaultWidth: {
     borderBottomWidth: 1,

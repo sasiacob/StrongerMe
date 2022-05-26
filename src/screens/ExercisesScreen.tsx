@@ -19,7 +19,7 @@ import {useSelector} from 'react-redux';
 import {removeExercise, workoutSelector} from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
 
-import {Spacing} from '../theme';
+import {lightTheme, Spacing} from '../theme';
 
 const ExerciseList = () => {
   const {exercises} = useSelector(workoutSelector);
@@ -73,7 +73,7 @@ const ExerciseScreen = () => {
 
   return (
     <Container fill>
-      <Column style={{flex: 1}}>
+      <Column style={lightTheme.fill}>
         <ExerciseList />
         <Button
           onPress={enableModal}

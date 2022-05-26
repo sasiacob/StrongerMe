@@ -1,5 +1,5 @@
 import {FlatList, Pressable, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {Workout} from '../API';
 import {
   ADD_WORKOUTS_SCREEN,
@@ -7,11 +7,7 @@ import {
 } from '../navigation/screenNames';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import {
-  addWorkout,
-  removeWorkout,
-  workoutSelector,
-} from '../store/slices/workoutSlice';
+import {removeWorkout, workoutSelector} from '../store/slices/workoutSlice';
 import {useDispatch} from 'react-redux';
 import {
   WorkoutCard,

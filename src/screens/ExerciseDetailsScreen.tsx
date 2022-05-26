@@ -2,17 +2,8 @@ import React, {useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {Exercise} from '../API';
-import {
-  Button,
-  Card,
-  Column,
-  Divider,
-  ExerciseDataInput,
-  Input,
-  Row,
-  Text,
-} from '../components';
-import {addExercise, updateExercise} from '../store/slices/workoutSlice';
+import {Button, Card, ExerciseDataInput, Input, Row} from '../components';
+import {updateExercise} from '../store/slices/workoutSlice';
 import {Spacing} from '../theme';
 
 const ExerciseDetailsScreen = ({route}) => {
@@ -21,9 +12,6 @@ const ExerciseDetailsScreen = ({route}) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const resetValues = () => {
-    setExercise(initialValue);
-  };
   const onNameChange = (text: string) => {
     const updated = {...exercise, name: text};
     setExercise(updated);
@@ -58,7 +46,11 @@ const ExerciseDetailsScreen = ({route}) => {
             label="Category"
           />
 
-          <ExerciseDataInput editable={isEditMode} exercise={exercise} onUpdate={setExercise} />
+          <ExerciseDataInput
+            editable={isEditMode}
+            exercise={exercise}
+            onUpdate={setExercise}
+          />
         </Card>
       </ScrollView>
 

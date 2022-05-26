@@ -12,7 +12,6 @@ interface IAppModalProps {
 const AppModal = ({
   modalVisible,
   setModalVisible,
-  onResetValues,
   children,
 }: IAppModalProps) => {
   const closeModal = () => {
@@ -41,7 +40,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    
   },
   modalInnerContainer: {
     backgroundColor: Colors.surface,

@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
 import {Exercise} from '../API';
 import {
@@ -25,7 +25,9 @@ const ExerciseDataInput = ({
     const value = parseInt(text);
     if (isNaN(value)) {
       return null;
-    } else return value;
+    } else {
+      return value;
+    }
   };
   const onWeightChange = (text: string) => {
     const value = validNumber(text);
@@ -50,7 +52,7 @@ const ExerciseDataInput = ({
   const onRepsChange = (newValue: number, index: number) => {
     // COPY ARRAY OF REPS AND REPLACE AT SPECIFIC INDEX
     const repsArray = exercise.reps.map((rep, i) => {
-      if (index == i) {
+      if (index === i) {
         return newValue;
       }
       return rep;
@@ -87,5 +89,3 @@ const ExerciseDataInput = ({
 };
 
 export default ExerciseDataInput;
-
-const styles = StyleSheet.create({});

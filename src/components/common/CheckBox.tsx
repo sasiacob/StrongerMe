@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {Pressable} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 interface ICheckBoxProps {
   selected?: boolean;
@@ -18,5 +18,3 @@ const CheckBox = ({onPress, selected}: ICheckBoxProps) => {
 };
 
 export default CheckBox;
-
-const styles = StyleSheet.create({});

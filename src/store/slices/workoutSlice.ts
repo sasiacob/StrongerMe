@@ -21,9 +21,11 @@ const workoutSlice = createSlice({
     },
     updateWorkout: (state, {payload}: PayloadAction<Workout>) => {
       const index = state.workouts.findIndex(
-        workout => workout.id == payload.id,
+        workout => workout.id === payload.id,
       );
-      if (index == -1) throw new Error(`Undefined workout id: ${payload.id}`);
+      if (index === -1) {
+        throw new Error(`Undefined workout id: ${payload.id}`);
+      }
 
       const newArray = [...state.workouts];
       newArray[index] = payload;
@@ -37,9 +39,11 @@ const workoutSlice = createSlice({
     },
     updateExercise: (state, {payload}: PayloadAction<Exercise>) => {
       const index = state.exercises.findIndex(
-        exercise => exercise.id == payload.id,
+        exercise => exercise.id === payload.id,
       );
-      if (index == -1) throw new Error(`Undefined exercise id: ${payload.id}`);
+      if (index === -1) {
+        throw new Error(`Undefined exercise id: ${payload.id}`);
+      }
 
       const newArray = [...state.exercises];
       newArray[index] = payload;
@@ -55,11 +59,12 @@ const workoutSlice = createSlice({
     },
     updateWorkoutLog: (state, {payload}: PayloadAction<WorkoutLog>) => {
       const index = state.workoutLogs.findIndex(
-        workoutLog => workoutLog.id == payload.id,
+        workoutLog => workoutLog.id === payload.id,
       );
 
-      if (index == -1)
+      if (index === -1) {
         throw new Error(`Undefined workoutLog id: ${payload.id}`);
+      }
 
       const newArray = [...state.workoutLogs];
       newArray[index] = payload;

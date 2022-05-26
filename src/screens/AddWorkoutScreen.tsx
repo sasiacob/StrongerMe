@@ -1,11 +1,5 @@
 import React, {useState} from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Workout} from '../API';
 import {useSelector} from 'react-redux';
 import {addWorkout, workoutSelector} from '../store/slices/workoutSlice';
@@ -43,7 +37,7 @@ const AddWorkoutScreen = () => {
 
   const toggleSelected = (id: string) => {
     if (selectedIds.includes(id)) {
-      setSelectedIds(c => c.filter(i => i != id));
+      setSelectedIds(c => c.filter(i => i !== id));
     } else {
       setSelectedIds(c => [...c, id]);
     }
@@ -54,9 +48,9 @@ const AddWorkoutScreen = () => {
       <Card style={lightTheme.fill}>
         <Input onChangeText={setName} placeholder="Workout title" />
         <Text>Exercises: </Text>
-        <View style={{flex: 1}}>
+        <View style={lightTheme.fill}>
           <ScrollView contentContainerStyle={lightTheme.fill}>
-            {exercises.map((exercise, index) => (
+            {exercises.map(exercise => (
               <TouchableOpacity
                 key={exercise.id}
                 onPress={() => toggleSelected(exercise.id)}>

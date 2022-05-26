@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import {Exercise} from '../API';
 import {useDispatch} from 'react-redux';
@@ -17,7 +17,7 @@ const initialValue: Exercise = {
   createdAt: '',
   updatedAt: '',
 };
-const AddExerciseScreen = ({route, navigation}) => {
+const AddExerciseScreen = ({navigation}) => {
   const [exercise, setExercise] = useState<Exercise>(initialValue);
   const dispatch = useDispatch();
 

@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-import {AppThunk} from '../store';
 import {RootState} from '../rootReducer';
 
 export interface IAuthError {
@@ -34,12 +33,10 @@ export const authSlice = createSlice({
       state.isLoading = payload;
     },
     setAuthSuccess: (state, {payload}: PayloadAction<ICurentUser>) => {
-   
       state.currentUser = payload;
       state.isAuth = true;
     },
     setLogOut: state => {
-
       state.isAuth = false;
       state.currentUser = undefined;
     },
@@ -52,7 +49,6 @@ export const authSlice = createSlice({
 
 export const login = () => dispatch => {
   try {
-   
     dispatch(setLoading(true));
     dispatch(setLoading(false));
     const currentUser: ICurentUser = {

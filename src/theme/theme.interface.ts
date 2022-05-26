@@ -21,6 +21,6 @@ export interface FontSizeTheme {
   small: number;
   regular: number;
   large: number;
-  xLarge:number, 
+  xLarge: number;
   title: number;
 }

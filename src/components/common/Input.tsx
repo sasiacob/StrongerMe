@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-  TextStyle,
-  View,
-} from 'react-native';
+import {StyleSheet, TextInput, TextInputProps, TextStyle} from 'react-native';
 import React from 'react';
 import {Colors, fontSize, Spacing} from '../../theme';
 import {Column, Text} from '.';

@@ -2,7 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {WorkoutLog} from '../API';
 import {Card, Column, Row, Text} from './common';
-import {Colors, fontSize, Spacing} from '../theme';
+import {fontSize, Spacing} from '../theme';
 interface IWorkoutLogCard {
   item: WorkoutLog;
 }

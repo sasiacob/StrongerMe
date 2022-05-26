@@ -1,5 +1,5 @@
-import {StyleSheet, View} from 'react-native';
-import React, {FunctionComponent} from 'react';
+import {StyleSheet} from 'react-native';
+import React from 'react';
 import {Exercise} from '../API';
 import {Text, Card, Row} from './common';
 import {Colors, fontSize, Spacing} from '../theme';

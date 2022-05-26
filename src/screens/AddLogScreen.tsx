@@ -15,7 +15,7 @@ import {
   Card,
   ExerciseDataInput,
 } from '../components';
-import {Spacing} from '../theme';
+import {lightTheme, Spacing} from '../theme';
 
 interface SelectableWorkout extends Workout {
   isSelected?: boolean;
@@ -25,7 +25,6 @@ interface SelectableExercise extends Exercise {
 }
 const AddLogScreen = ({navigation}) => {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const [isFirstPhase, setIsFirstPhase] = useState(true);
 
   const {exercises, workouts} = useSelector(workoutSelector);
@@ -49,7 +48,7 @@ const AddLogScreen = ({navigation}) => {
   }
   function resetValues() {
     setName('');
-    setDescription('');
+
     setSelectableExercises(exercises);
     setSelectableWorkouts(workouts);
     setIsFirstPhase(true);
@@ -60,9 +59,10 @@ const AddLogScreen = ({navigation}) => {
 
   const onToggleExercise = (id: string) => {
     const updatedArray = selectableExercises.map(element => {
-      if (element.id == id) {
-        if (element.isSelected == true) return {...element, isSelected: false};
-        else {
+      if (element.id === id) {
+        if (element.isSelected === true) {
+          return {...element, isSelected: false};
+        } else {
           return {...element, isSelected: true};
         }
       }
@@ -73,10 +73,11 @@ const AddLogScreen = ({navigation}) => {
   const onToggleWorkout = (id: string) => {
     let exercisesIds: string[];
     const updatedArray = selectableWorkouts.map(element => {
-      if (element.id == id) {
+      if (element.id === id) {
         exercisesIds = element.exercises.map(el => el.id);
-        if (element.isSelected == true) return {...element, isSelected: false};
-        else {
+        if (element.isSelected === true) {
+          return {...element, isSelected: false};
+        } else {
           return {...element, isSelected: true};
         }
       }
@@ -102,7 +103,7 @@ const AddLogScreen = ({navigation}) => {
 
   const onExerciseUpdate = (updatedItem: Exercise) => {
     const updatedArr: SelectableExercise[] = filteredExercises().map(el => {
-      if (el.id == updatedItem.id) {
+      if (el.id === updatedItem.id) {
         return {...updatedItem, isSelected: true};
       }
       return el;
@@ -111,7 +112,7 @@ const AddLogScreen = ({navigation}) => {
   };
 
   const FirstPhase = () => (
-    <Column style={{flex: 1}}>
+    <Column style={lightTheme.fill}>
       <Input
         value={name}
         onChangeText={setName}
@@ -120,13 +121,13 @@ const AddLogScreen = ({navigation}) => {
 
       <View style={styles.spacing} />
       {workouts?.length > 0 && (
-        <Card style={{minHeight: 150, maxHeight: '40%'}}>
+        <Card style={styles.card}>
           <Text>Workout: </Text>
 
           <ScrollView
-            style={{flex: 1}}
+            style={lightTheme.fill}
             contentContainerStyle={styles.listContainer}>
-            {selectableWorkouts.map((workout, index) => (
+            {selectableWorkouts.map(workout => (
               <TouchableOpacity
                 key={workout.id}
                 onPress={() => onToggleWorkout(workout.id)}>
@@ -142,7 +143,7 @@ const AddLogScreen = ({navigation}) => {
         </Card>
       )}
       <View style={styles.spacing} />
-      <Card style={{minHeight: 150, maxHeight: '40%'}}>
+      <Card style={styles.card}>
         <Text>Exercises: </Text>
 
         <ScrollView contentContainerStyle={styles.listContainer}>
@@ -162,14 +163,14 @@ const AddLogScreen = ({navigation}) => {
       </Card>
       <View style={styles.spacing} />
       <Button
-        disabled={filteredExercises().length == 0}
+        disabled={filteredExercises().length === 0}
         onPress={onNextPress}
         text={'Next'}
       />
     </Column>
   );
   const SecondPhase = () => (
-    <Column style={{flex: 1}}>
+    <Column style={lightTheme.fill}>
       <Container fill transparent>
         <ScrollView contentContainerStyle={styles.listContainer}>
           {filteredExercises().map(exercise => (
@@ -216,5 +217,9 @@ const styles = StyleSheet.create({
 
   padded: {
     paddingVertical: Spacing.base,
+  },
+  card: {
+    minHeight: 150,
+    maxHeight: '40%',
   },
 });

@@ -30,7 +30,7 @@ const WorkoutDetailsScreen = ({route, navigation}) => {
 
   const toggleSelected = (id: string) => {
     if (selectedIds.includes(id)) {
-      setSelectedIds(c => c.filter(i => i != id));
+      setSelectedIds(c => c.filter(i => i !== id));
     } else {
       setSelectedIds(c => [...c, id]);
     }

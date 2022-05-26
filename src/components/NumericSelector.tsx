@@ -18,12 +18,16 @@ const Selector = ({
   disabled = false,
 }: ISelectorProps) => {
   const onIncrement = () => {
-    if (value < max) onChange(value + 1);
+    if (value < max) {
+      onChange(value + 1);
+    }
   };
   const onDecrement = () => {
-    if (value > min) onChange(value - 1);
+    if (value > min) {
+      onChange(value - 1);
+    }
   };
-  if (disabled)
+  if (disabled) {
     return (
       <Row style={styles.row}>
         <View style={styles.valueContainer}>
@@ -31,6 +35,7 @@ const Selector = ({
         </View>
       </Row>
     );
+  }
   return (
     <Row style={styles.row}>
       <TouchableOpacity style={styles.iconContainer} onPress={onDecrement}>

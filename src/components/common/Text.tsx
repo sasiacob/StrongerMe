@@ -1,4 +1,4 @@
-import {StyleSheet, Text as RNText, TextProps, View} from 'react-native';
+import {StyleSheet, Text as RNText, TextProps} from 'react-native';
 import React from 'react';
 import {lightTheme} from '../../theme';
 

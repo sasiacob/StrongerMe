@@ -13,12 +13,9 @@ import {
 } from '../components';
 import {Exercise, Workout, WorkoutLog} from '../API';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  updateWorkoutLog,
-  workoutSelector,
-} from '../store/slices/workoutSlice';
+import {updateWorkoutLog, workoutSelector} from '../store/slices/workoutSlice';
 
-import {Spacing} from '../theme';
+import {lightTheme, Spacing} from '../theme';
 
 interface SelectableWorkout extends Workout {
   isSelected?: boolean;
@@ -30,7 +27,7 @@ const LogDetailsScreen = ({route, navigation}) => {
   const workoutLog: WorkoutLog = route.params.workoutLog;
 
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+
   const [isFirstPhase, setIsFirstPhase] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const {exercises, workouts} = useSelector(workoutSelector);
@@ -53,7 +50,7 @@ const LogDetailsScreen = ({route, navigation}) => {
   }
   function resetValues() {
     setName('');
-    setDescription('');
+
     setSelectableExercises(exercises);
     setSelectableWorkouts(workouts);
     setIsFirstPhase(true);
@@ -64,9 +61,10 @@ const LogDetailsScreen = ({route, navigation}) => {
 
   const onToggleExercise = (id: string) => {
     const updatedArray = selectableExercises.map(element => {
-      if (element.id == id) {
-        if (element.isSelected == true) return {...element, isSelected: false};
-        else {
+      if (element.id === id) {
+        if (element.isSelected === true) {
+          return {...element, isSelected: false};
+        } else {
           return {...element, isSelected: true};
         }
       }
@@ -77,10 +75,11 @@ const LogDetailsScreen = ({route, navigation}) => {
   const onToggleWorkout = (id: string) => {
     let exercisesIds: string[];
     const updatedArray = selectableWorkouts.map(element => {
-      if (element.id == id) {
+      if (element.id === id) {
         exercisesIds = element.exercises.map(el => el.id);
-        if (element.isSelected == true) return {...element, isSelected: false};
-        else {
+        if (element.isSelected === true) {
+          return {...element, isSelected: false};
+        } else {
           return {...element, isSelected: true};
         }
       }
@@ -110,7 +109,7 @@ const LogDetailsScreen = ({route, navigation}) => {
 
   const onExerciseUpdate = (updatedItem: Exercise) => {
     const updatedArr: SelectableExercise[] = filteredExercises().map(el => {
-      if (el.id == updatedItem.id) {
+      if (el.id === updatedItem.id) {
         return {...updatedItem, isSelected: true};
       }
       return el;
@@ -119,7 +118,7 @@ const LogDetailsScreen = ({route, navigation}) => {
   };
 
   const FirstPhase = () => (
-    <Column style={{flex: 1}}>
+    <Column style={lightTheme.fill}>
       <Input
         value={name}
         onChangeText={setName}
@@ -128,13 +127,13 @@ const LogDetailsScreen = ({route, navigation}) => {
 
       <View style={styles.spacing} />
       {workouts?.length > 0 && (
-        <Card style={{minHeight: 150, maxHeight: '40%'}}>
+        <Card style={styles.workoutCard}>
           <Text>Workout: </Text>
 
           <ScrollView
-            style={{flex: 1}}
+            style={lightTheme.fill}
             contentContainerStyle={styles.listContainer}>
-            {selectableWorkouts.map((workout, index) => (
+            {selectableWorkouts.map(workout => (
               <TouchableOpacity
                 key={workout.id}
                 onPress={() => onToggleWorkout(workout.id)}>
@@ -150,7 +149,7 @@ const LogDetailsScreen = ({route, navigation}) => {
         </Card>
       )}
       <View style={styles.spacing} />
-      <Card style={{minHeight: 150, maxHeight: '40%'}}>
+      <Card style={styles.workoutCard}>
         <Text>Exercises: </Text>
 
         <ScrollView contentContainerStyle={styles.listContainer}>
@@ -170,14 +169,14 @@ const LogDetailsScreen = ({route, navigation}) => {
       </Card>
       <View style={styles.spacing} />
       <Button
-        disabled={filteredExercises().length == 0}
+        disabled={filteredExercises().length === 0}
         onPress={onNextPress}
         text={'Next'}
       />
     </Column>
   );
   const SecondPhase = () => (
-    <Column style={{flex: 1}}>
+    <Column style={lightTheme.fill}>
       <Container fill transparent>
         <ScrollView contentContainerStyle={styles.listContainer}>
           {filteredExercises().map(exercise => (
@@ -204,7 +203,7 @@ const LogDetailsScreen = ({route, navigation}) => {
     </Column>
   );
   return (
-    <View style={{flex: 1, padding: Spacing.base}}>
+    <View style={[lightTheme.fill, styles.padded]}>
       {isFirstPhase ? FirstPhase() : SecondPhase()}
     </View>
   );
@@ -234,4 +233,9 @@ const styles = StyleSheet.create({
   padded: {
     paddingVertical: Spacing.base,
   },
+  workoutCard: {
+    minHeight: 150,
+    maxHeight: '40%',
+  },
+  exerciseCard: {},
 });

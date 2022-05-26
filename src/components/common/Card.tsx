@@ -1,4 +1,4 @@
-import {StyleSheet, View, ViewProps} from 'react-native';
+import {View, ViewProps} from 'react-native';
 import React from 'react';
 import {lightTheme} from '../../theme';
 
