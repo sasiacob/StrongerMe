@@ -1,13 +1,20 @@
-import {StyleSheet, View} from 'react-native';
-import React, {FunctionComponent} from 'react';
+import {StyleSheet} from 'react-native';
+import React from 'react';
 import {Exercise} from '../API';
 import {Workout} from '../API';
 import {Card, Column, Row, Text} from './common';
 import {Colors, fontSize, Spacing} from '../theme';
+import {useSelector} from 'react-redux';
+import {workoutSelector} from '../store/slices/workoutSlice';
 interface IWorkoutCard {
   item: Workout;
 }
 const WorkoutCard = ({item}: IWorkoutCard) => {
+  const {exercises} = useSelector(workoutSelector);
+  const filtered = (exercise: Exercise) => {
+    const ids = item.exercises.map(el => el.id);
+    return ids.includes(exercise.id);
+  };
   return (
     <Card>
       <Text style={styles.heading}>{item.title}</Text>
@@ -17,7 +24,7 @@ const WorkoutCard = ({item}: IWorkoutCard) => {
         <Text style={styles.header}>Weight</Text>
       </Row>
       <Column>
-        {item.exercises?.map(exercise => (
+        {exercises.filter(filtered).map(exercise => (
           <Row spaceBetween key={exercise.id} style={styles.row}>
             <Text>{exercise.name}</Text>
             <Text>{exercise.weight}</Text>

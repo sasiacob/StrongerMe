@@ -1,17 +1,15 @@
 import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import {Button, Card, CheckBox, Column, Input, Row, Text} from '../components';
-import {Workout} from '../API';
+import {Exercise, Workout} from '../API';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateWorkout, workoutSelector} from '../store/slices/workoutSlice';
 
 import {lightTheme, Spacing} from '../theme';
 const WorkoutDetailsScreen = ({route, navigation}) => {
   const [workout, setWorkout] = useState<Workout>(route.params.workout);
-  const initialIndexes: string[] = route.params.workout.exercises.map(
-    el => el.id,
-  );
-  const [selectedIds, setSelectedIds] = useState<string[]>(initialIndexes);
+  const initialIds: string[] = route.params.workout.exercises.map(el => el.id);
+  const [selectedIds, setSelectedIds] = useState<string[]>(initialIds);
   const [isEditMode, setIsEditMode] = useState(false);
   const {exercises} = useSelector(workoutSelector);
 
@@ -42,6 +40,11 @@ const WorkoutDetailsScreen = ({route, navigation}) => {
     setWorkout(current => {
       return {...current, title: text};
     });
+  };
+
+  const filtered = (exercise: Exercise) => {
+    const ids = workout.exercises.map(el => el.id);
+    return ids.includes(exercise.id);
   };
 
   const enableEdit = () => {
@@ -86,7 +89,7 @@ const WorkoutDetailsScreen = ({route, navigation}) => {
                     Weight
                   </Text>
                 </Row>
-                {workout.exercises.map(exercise => (
+                {exercises.filter(filtered).map(exercise => (
                   <Row
                     key={exercise.id}
                     style={styles.exerciseRow}
