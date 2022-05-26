@@ -9,13 +9,17 @@ import {
   WorkoutsScreen,
   LogDetailsScreen,
   AddExerciseScreen,
+  AddWorkoutScreen,
+  AddLogScreen,
 } from '../screens';
 import {
   ADD_EXERCISE_SCREEN,
+  ADD_LOGS_SCREEN,
+  ADD_WORKOUTS_SCREEN,
   EXERCISES_SCREEN,
   EXERCISE_DETAILS_SCREEN,
   HOME_SCREEN,
-  LOGS_DETAILS_SCREEN,
+  LOG_DETAILS_SCREEN,
   LOGS_SCREEN,
   WORKOUTS_SCREEN,
   WORKOUT_DETAILS_SCREEN,
@@ -43,6 +47,7 @@ export const WorkoutStack = () => (
       name={WORKOUT_DETAILS_SCREEN}
       component={WorkoutDetailsScreen}
     />
+    <Stack.Screen name={ADD_WORKOUTS_SCREEN} component={AddWorkoutScreen} />
   </Stack.Navigator>
 );
 export const ExerciseStack = () => (
@@ -66,6 +71,7 @@ export const LogsStack = () => (
       name={LOGS_SCREEN}
       component={LogsScreen}
     />
-    <Stack.Screen name={LOGS_DETAILS_SCREEN} component={LogDetailsScreen} />
+    <Stack.Screen name={LOG_DETAILS_SCREEN} component={LogDetailsScreen} />
+    <Stack.Screen name={ADD_LOGS_SCREEN} component={AddLogScreen} />
   </Stack.Navigator>
 );

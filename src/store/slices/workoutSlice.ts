@@ -57,6 +57,7 @@ const workoutSlice = createSlice({
       const index = state.workoutLogs.findIndex(
         workoutLog => workoutLog.id == payload.id,
       );
+
       if (index == -1)
         throw new Error(`Undefined workoutLog id: ${payload.id}`);
 

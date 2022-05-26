@@ -1,23 +1,20 @@
-import React, {useState} from 'react';
 import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {
-  Button,
-  Card,
-  CheckBox,
-  Column,
-  Container,
-  ExerciseDataInput,
-  Input,
-  Row,
-  Text,
-} from '../components';
+import React, {useState} from 'react';
 import {Exercise, Workout, WorkoutLog} from '../API';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
+import {addWorkoutLog, workoutSelector} from '../store/slices/workoutSlice';
+import {useDispatch} from 'react-redux';
 import {
-  updateWorkoutLog,
-  workoutSelector,
-} from '../store/slices/workoutSlice';
-
+  Text,
+  Input,
+  Container,
+  Column,
+  Button,
+  Row,
+  CheckBox,
+  Card,
+  ExerciseDataInput,
+} from '../components';
 import {Spacing} from '../theme';
 
 interface SelectableWorkout extends Workout {
@@ -26,30 +23,29 @@ interface SelectableWorkout extends Workout {
 interface SelectableExercise extends Exercise {
   isSelected?: boolean;
 }
-const LogDetailsScreen = ({route, navigation}) => {
-  const workoutLog: WorkoutLog = route.params.workoutLog;
-
+const AddLogScreen = ({navigation}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [isFirstPhase, setIsFirstPhase] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isFirstPhase, setIsFirstPhase] = useState(true);
+
   const {exercises, workouts} = useSelector(workoutSelector);
   const [selectableWorkouts, setSelectableWorkouts] =
     useState<SelectableWorkout[]>(workouts);
-  const [selectableExercises, setSelectableExercises] = useState<
-    SelectableExercise[]
-  >(workoutLog.exercises);
+  const [selectableExercises, setSelectableExercises] =
+    useState<SelectableExercise[]>(exercises);
   const dispatch = useDispatch();
 
   async function onSubmit() {
     try {
-      const updatedItem = {...workoutLog, exercises: [...filteredExercises()]};
-      dispatch(updateWorkoutLog(updatedItem));
+      const newItem: WorkoutLog = {
+        id: Date.now().toString(),
+        exercises: [...filteredExercises()],
+        timstamp: Date.now(),
+      };
+      dispatch(addWorkoutLog(newItem));
       navigation.pop();
       resetValues();
-    } catch (e) {
-      console.warn(e);
-    }
+    } catch (e) {}
   }
   function resetValues() {
     setName('');
@@ -101,11 +97,7 @@ const LogDetailsScreen = ({route, navigation}) => {
   };
 
   const onBackPress = () => {
-    //setIsFirstPhase(true);
-    setIsEditMode(false);
-  };
-  const enableEdit = () => {
-    setIsEditMode(true);
+    setIsFirstPhase(true);
   };
 
   const onExerciseUpdate = (updatedItem: Exercise) => {
@@ -184,7 +176,6 @@ const LogDetailsScreen = ({route, navigation}) => {
             <Card key={exercise.id}>
               <Text strong>{exercise.name}</Text>
               <ExerciseDataInput
-                editable={isEditMode}
                 exercise={exercise}
                 onUpdate={onExerciseUpdate}
               />
@@ -193,14 +184,10 @@ const LogDetailsScreen = ({route, navigation}) => {
         </ScrollView>
       </Container>
 
-      {!isEditMode ? (
-        <Button onPress={enableEdit} text="Edit" />
-      ) : (
-        <Row style={styles.buttonsContainer}>
-          <Button text="Back" onPress={onBackPress} />
-          <Button text="Save" onPress={onSubmit} />
-        </Row>
-      )}
+      <Row style={styles.buttonsContainer}>
+        <Button text="Back" onPress={onBackPress} />
+        <Button text="Save" onPress={onSubmit} />
+      </Row>
     </Column>
   );
   return (
@@ -210,16 +197,12 @@ const LogDetailsScreen = ({route, navigation}) => {
   );
 };
 
-export default LogDetailsScreen;
+export default AddLogScreen;
 
 const styles = StyleSheet.create({
   buttonsContainer: {
     justifyContent: 'space-around',
     marginTop: Spacing.double,
-  },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 44,
   },
 
   listContainer: {

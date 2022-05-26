@@ -1,14 +1,10 @@
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, Pressable, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
 import {Workout} from '../API';
-import {WORKOUT_DETAILS_SCREEN} from '../navigation/screenNames';
+import {
+  ADD_WORKOUTS_SCREEN,
+  WORKOUT_DETAILS_SCREEN,
+} from '../navigation/screenNames';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {
@@ -19,79 +15,15 @@ import {
 import {useDispatch} from 'react-redux';
 import {
   WorkoutCard,
-  AppModal,
   Container,
   ScreenHeader,
   Center,
   Button,
   Column,
-  Row,
-  CheckBox,
 } from '../components';
-import {Text, Input} from '../components';
+import {Text} from '../components';
 import {lightTheme, Spacing} from '../theme';
-const AddWorkoutModal = ({modalVisible, setModalVisible, onAddSubmit}) => {
-  const [name, setName] = useState('');
-  const {exercises} = useSelector(workoutSelector);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  async function addWorkout() {
-    try {
-      const selectedExercises = exercises.filter(item =>
-        selectedIds.includes(item.id),
-      );
-      const newItem: Workout = {
-        __typename: 'Workout',
-        id: Date.now().toString(),
-        title: name,
-        exercises: selectedExercises,
-      };
-      onAddSubmit(newItem);
-      resetValues();
-    } catch (e) {
-      console.log('error: ', e);
-    }
-  }
-  function resetValues() {
-    setName('');
-
-    setSelectedIds([]);
-  }
-
-  const toggleSelected = (id: string) => {
-    if (selectedIds.includes(id)) {
-      setSelectedIds(c => c.filter(i => i != id));
-    } else {
-      setSelectedIds(c => [...c, id]);
-    }
-  };
-
-  return (
-    <AppModal setModalVisible={setModalVisible} modalVisible={modalVisible}>
-      <Input onChangeText={setName} placeholder="Workout title" />
-
-      <Text>Exercises: </Text>
-      <View style={{height: 200}}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
-          {exercises.map((exercise, index) => (
-            <TouchableOpacity
-              key={exercise.id}
-              onPress={() => toggleSelected(exercise.id)}>
-              <Row style={styles.exerciseRow} spaceBetween>
-                <Text>{exercise.name}</Text>
-                <CheckBox selected={selectedIds.includes(exercise.id)} />
-              </Row>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      <Pressable onPress={addWorkout} style={styles.buttonContainer}>
-        <Text style={styles.buttonText}>Save Workout</Text>
-      </Pressable>
-    </AppModal>
-  );
-};
 const WorkoutList = () => {
   const {workouts} = useSelector(workoutSelector);
   const navigation = useNavigation();
@@ -111,7 +43,7 @@ const WorkoutList = () => {
           deleteWorkout(item);
         }}
         onPress={() =>
-          navigation.navigate(WORKOUT_DETAILS_SCREEN, {exercise: item})
+          navigation.navigate(WORKOUT_DETAILS_SCREEN, {workout: item})
         }>
         <WorkoutCard item={item} />
       </Pressable>
@@ -133,28 +65,20 @@ const WorkoutList = () => {
     />
   );
 };
-const WorkoutsScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const dispatch = useDispatch();
-  const onAddSubmit = (workout: Workout) => {
-    dispatch(addWorkout(workout));
-    setModalVisible(false);
+
+const WorkoutsScreen = ({navigation}) => {
+  const onAddPress = () => {
+    navigation.push(ADD_WORKOUTS_SCREEN);
   };
+
   return (
     <Container fill>
       <Column style={lightTheme.fill}>
         <WorkoutList />
         <Button
-          onPress={() => {
-            setModalVisible(true);
-          }}
+          onPress={onAddPress}
           containerStyle={styles.floatingButton}
           text="+ Add Workout"
-        />
-        <AddWorkoutModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          onAddSubmit={onAddSubmit}
         />
       </Column>
     </Container>
@@ -164,17 +88,6 @@ const WorkoutsScreen = () => {
 export default WorkoutsScreen;
 
 const styles = StyleSheet.create({
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    padding: 16,
-  },
-  buttonContainer: {
-    alignSelf: 'center',
-    backgroundColor: '#4696ec',
-    borderRadius: 99,
-    paddingHorizontal: 8,
-  },
   floatingButton: {
     position: 'absolute',
     bottom: 44,
@@ -190,8 +103,5 @@ const styles = StyleSheet.create({
   listContainer: {
     padding: Spacing.base,
     flexGrow: 1,
-  },
-  exerciseRow: {
-    paddingVertical: Spacing.base,
   },
 });
