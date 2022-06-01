@@ -82,7 +82,7 @@ export type Exercise = {
   id: string;
   name: string;
   description?: string | null;
-  type?: string | null;
+  type?: ExerciseType | null;
   weight?: number | null;
   category?: string | null;
   sets?: number | null;
@@ -592,5 +592,9 @@ export type WorkoutLog = {
   timstamp: number;
   exercises: Exercise[];
   workout?: Workout | null;
-  
 };
+
+export enum ExerciseType {
+  Strength,
+  Cardio,
+}

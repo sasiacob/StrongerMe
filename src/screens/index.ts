@@ -8,3 +8,4 @@ export {default as LogsScreen} from './LogsScreen';
 export {default as LogDetailsScreen} from './LogDetailsScreen';
 export {default as AddWorkoutScreen} from './AddWorkoutScreen';
 export {default as AddLogScreen} from './AddLogScreen';
+export {default as AccountScreen} from './AccountScreen';

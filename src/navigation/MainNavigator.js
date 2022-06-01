@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
+  AccountStack,
   ExerciseStack,
   HomeStack,
   LogsStack,
@@ -57,6 +58,16 @@ const MainNavigator = () => {
           }}
           name={stacks.logStack}
           component={LogsStack}
+        />
+        <Tab.Screen
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Icon name="account" size={size} color={color} />
+            ),
+            tabBarLabel: 'Account',
+          }}
+          name={stacks.accountStack}
+          component={AccountStack}
         />
       </Tab.Navigator>
     </NavigationContainer>

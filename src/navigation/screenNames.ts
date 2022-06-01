@@ -8,9 +8,11 @@ export const ADD_WORKOUTS_SCREEN = 'AddWorkout';
 export const LOGS_SCREEN = 'Logs';
 export const LOG_DETAILS_SCREEN = 'LogDetails';
 export const ADD_LOGS_SCREEN = 'AddLog';
+export const ACCOUNT_SCREEN = 'Account';
 export const stacks = {
   homeStack: 'HomeStack',
   workoutStack: 'WorkoutStack',
   exerciseStack: 'ExerciseStack',
   logStack: 'LogStack',
+  accountStack: 'AccountStack',
 };

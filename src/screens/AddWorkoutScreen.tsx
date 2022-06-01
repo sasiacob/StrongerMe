@@ -7,7 +7,7 @@ import {Row, CheckBox, Button, Card} from '../components';
 import {Text, Input} from '../components';
 import {useDispatch} from 'react-redux';
 import {lightTheme, Spacing} from '../theme';
-const AddWorkoutScreen = () => {
+const AddWorkoutScreen = ({navigation}) => {
   const [name, setName] = useState('');
   const {exercises} = useSelector(workoutSelector);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -25,6 +25,7 @@ const AddWorkoutScreen = () => {
       };
       dispatch(addWorkout(newItem));
       resetValues();
+      navigation.pop();
     } catch (e) {
       console.log('error: ', e);
     }
@@ -49,7 +50,7 @@ const AddWorkoutScreen = () => {
         <Input onChangeText={setName} placeholder="Workout title" />
         <Text>Exercises: </Text>
         <View style={lightTheme.fill}>
-          <ScrollView contentContainerStyle={lightTheme.fill}>
+          <ScrollView contentContainerStyle={styles.listContainer}>
             {exercises.map(exercise => (
               <TouchableOpacity
                 key={exercise.id}

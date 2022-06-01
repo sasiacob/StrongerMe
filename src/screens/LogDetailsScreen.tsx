@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import {
   Button,
   Card,
@@ -14,8 +15,8 @@ import {
 import {Exercise, Workout, WorkoutLog} from '../API';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateWorkoutLog, workoutSelector} from '../store/slices/workoutSlice';
-
 import {lightTheme, Spacing} from '../theme';
+import {useEffect} from 'react';
 
 interface SelectableWorkout extends Workout {
   isSelected?: boolean;
@@ -36,11 +37,21 @@ const LogDetailsScreen = ({route, navigation}) => {
   const [selectableExercises, setSelectableExercises] = useState<
     SelectableExercise[]
   >(workoutLog.exercises);
+
+  const [logTimestamp, setLogTimestamp] = useState<number>(workoutLog.timstamp);
+  const [showPicker, setShowPicker] = useState(false);
+  useEffect(() => {
+    console.log('showPicker', showPicker);
+  }, [showPicker]);
   const dispatch = useDispatch();
 
   async function onSubmit() {
     try {
-      const updatedItem = {...workoutLog, exercises: [...filteredExercises()]};
+      const updatedItem = {
+        ...workoutLog,
+        timstamp: logTimestamp,
+        exercises: [...filteredExercises()],
+      };
       dispatch(updateWorkoutLog(updatedItem));
       navigation.pop();
       resetValues();
@@ -116,7 +127,14 @@ const LogDetailsScreen = ({route, navigation}) => {
     });
     setSelectableExercises(updatedArr);
   };
-
+  const localeDate = (): string => {
+    const value = new Date(logTimestamp).toLocaleString();
+    return value;
+  };
+  const onDateChange = (date: Date) => {
+    setLogTimestamp(date.getTime());
+    setShowPicker(false);
+  };
   const FirstPhase = () => (
     <Column style={lightTheme.fill}>
       <Input
@@ -179,6 +197,26 @@ const LogDetailsScreen = ({route, navigation}) => {
     <Column style={lightTheme.fill}>
       <Container fill transparent>
         <ScrollView contentContainerStyle={styles.listContainer}>
+          <Row spaceBetween>
+            <Text>{localeDate()}</Text>
+
+            {isEditMode && (
+              <Button text="Edit" onPress={() => setShowPicker(true)} />
+            )}
+          </Row>
+
+          <DatePicker
+            modal
+            open={showPicker}
+            date={new Date(logTimestamp)}
+            onCancel={() => {
+              setShowPicker(false);
+            }}
+            maximumDate={new Date()}
+            mode="datetime"
+            onConfirm={onDateChange}
+          />
+
           {filteredExercises().map(exercise => (
             <Card key={exercise.id}>
               <Text strong>{exercise.name}</Text>

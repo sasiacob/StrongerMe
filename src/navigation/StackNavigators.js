@@ -11,6 +11,7 @@ import {
   AddExerciseScreen,
   AddWorkoutScreen,
   AddLogScreen,
+  AccountScreen,
 } from '../screens';
 import {
   ADD_EXERCISE_SCREEN,
@@ -23,6 +24,7 @@ import {
   LOGS_SCREEN,
   WORKOUTS_SCREEN,
   WORKOUT_DETAILS_SCREEN,
+  ACCOUNT_SCREEN,
 } from './screenNames';
 
 const Stack = createNativeStackNavigator();
@@ -73,5 +75,14 @@ export const LogsStack = () => (
     />
     <Stack.Screen name={LOG_DETAILS_SCREEN} component={LogDetailsScreen} />
     <Stack.Screen name={ADD_LOGS_SCREEN} component={AddLogScreen} />
+  </Stack.Navigator>
+);
+export const AccountStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      options={{headerShown: false}}
+      name={ACCOUNT_SCREEN}
+      component={AccountScreen}
+    />
   </Stack.Navigator>
 );
