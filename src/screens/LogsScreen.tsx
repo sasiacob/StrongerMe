@@ -47,7 +47,7 @@ const WorkoutLogList = () => {
   return (
     <FlatList
       ListHeaderComponent={<ScreenHeader text="Workout Logs" />}
-      data={workoutLogs}
+      data={workoutLogs.sort((a, b) => (a.timstamp < b.timstamp ? 1 : -1))}
       keyExtractor={({id}) => id}
       contentContainerStyle={styles.listContainer}
       ListEmptyComponent={
@@ -67,6 +67,7 @@ const WorkoutLogsScreen = ({navigation}) => {
     <Container fill>
       <Column style={lightTheme.fill}>
         <WorkoutLogList />
+
         <Button
           onPress={onAddPress}
           containerStyle={styles.floatingButton}

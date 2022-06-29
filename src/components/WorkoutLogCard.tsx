@@ -3,15 +3,15 @@ import React from 'react';
 import {WorkoutLog} from '../API';
 import {Card, Column, Row, Text} from './common';
 import {fontSize, Spacing} from '../theme';
+import {getLocaleDate} from '../utils/DateUtils';
 interface IWorkoutLogCard {
   item: WorkoutLog;
 }
+
 const WorkoutLogCard = ({item}: IWorkoutLogCard) => {
   return (
     <Card>
-      <Text style={styles.heading}>
-        {new Date(parseInt(item.id)).toLocaleString()}
-      </Text>
+      <Text style={styles.heading}>{getLocaleDate(item.timstamp)}</Text>
       <View style={styles.spacing} />
       <Row style={styles.row}>
         <Text style={[styles.header, styles.text]}>Exercise</Text>
@@ -26,7 +26,7 @@ const WorkoutLogCard = ({item}: IWorkoutLogCard) => {
             <Text style={styles.text}>{exercise.name}</Text>
             <Text style={styles.text}>{exercise.weight}</Text>
             <Text style={styles.text}>{exercise.sets}</Text>
-            <Text style={styles.text}>{exercise.reps.join(' ')}</Text>
+            <Text style={styles.text}>{exercise.reps?.join(' ')}</Text>
           </Row>
         ))}
       </Column>

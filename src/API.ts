@@ -89,6 +89,7 @@ export type Exercise = {
   reps?: Array<number | null> | null;
   createdAt: string;
   updatedAt: string;
+  weightRecord?: number | null;
 };
 
 export type UpdateExerciseInput = {

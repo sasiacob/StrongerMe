@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {Switch, View} from 'react-native';
 import React from 'react';
 import {Exercise} from '../API';
 import {
@@ -9,6 +9,7 @@ import {
   NumericSelector,
   NumericGroupSelector,
 } from '.';
+import {useState} from 'react';
 
 interface IExerciseDataInputProps {
   exercise: Exercise;
@@ -21,6 +22,7 @@ const ExerciseDataInput = ({
   onUpdate,
   editable = true,
 }: IExerciseDataInputProps) => {
+  const [isDetailedMode, setIsDetailedMode] = useState(false);
   const validNumber = (text: string) => {
     const value = parseInt(text);
     if (isNaN(value)) {
@@ -29,9 +31,9 @@ const ExerciseDataInput = ({
       return value;
     }
   };
-  const onWeightChange = (text: string) => {
+  const onWeightRecordChange = (text: string) => {
     const value = validNumber(text);
-    onUpdate({...exercise, weight: value});
+    onUpdate({...exercise, weightRecord: value});
   };
   const onSetsChange = (value: number) => {
     if (value >= 1 && value < 10) {
@@ -59,16 +61,28 @@ const ExerciseDataInput = ({
     });
     onUpdate({...exercise, reps: repsArray});
   };
-
+  const onDetailModeChange = (value: boolean) => {
+    setIsDetailedMode(value);
+  };
   return (
     <View>
-      <Input
-        editable={editable}
-        onChangeText={onWeightChange}
-        label="Weight"
-        value={exercise.weight?.toString() ?? ''}
-        keyboardType={'numeric'}
-      />
+      <Row spaceBetween>
+        <Input
+          editable={editable && !isDetailedMode}
+          onChangeText={onWeightRecordChange}
+          label="W. Record"
+          value={exercise.weightRecord?.toString() ?? ''}
+          keyboardType={'numeric'}
+        />
+        <Input
+          editable={editable && !isDetailedMode}
+          onChangeText={onWeightRecordChange}
+          label="Avg. Weight"
+          value={exercise.weight?.toString() ?? ''}
+          keyboardType={'numeric'}
+        />
+        <Switch value={isDetailedMode} onValueChange={onDetailModeChange} />
+      </Row>
       <Row spaceBetween>
         <Text>Sets</Text>
         <NumericSelector
@@ -80,9 +94,11 @@ const ExerciseDataInput = ({
       <Divider />
       <Text strong>Reps</Text>
       <NumericGroupSelector
+        isDetailedMode={isDetailedMode}
         disabled={!editable}
         values={exercise.reps}
-        onValueChange={onRepsChange}
+        onRepsChange={onRepsChange}
+        onAvgWeightChange={newAvgWeight => {}}
       />
     </View>
   );
